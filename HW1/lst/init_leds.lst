@@ -1,0 +1,131 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000         ; Filename:     leds_init.s
+    2 00000000         ; Author:       Shyamal Anadkat
+    3 00000000         ; Description: 
+    4 00000000         
+    5 00000000                 export           init_leds
+    6 00000000         ;*******************************************************
+                       ************************* 
+    7 00000000         ; SRAM
+    8 00000000         ;*******************************************************
+                       ************************* 
+    9 00000000                 AREA             SRAM, READWRITE
+   10 00000000                 align
+   11 00000000         
+   12 00000000         ;*******************************************************
+                       ************************* 
+   13 00000000         ; Constant Variables (FLASH) Segment
+   14 00000000         ;*******************************************************
+                       ************************* 
+   15 00000000                 AREA             FLASH, CODE, READONLY
+   16 00000000                 align
+   17 00000000         
+   18 00000000         ;*******************************************************
+                       ************************* 
+   19 00000000         ; function init_leds
+   20 00000000         ;  
+   21 00000000         ; Description: 
+   22 00000000         ;  initializes color codes for each led 
+   23 00000000         ; Parameters:
+   24 00000000         ;  RO - address of led array 
+   25 00000000         ;  R1 - address of update led array  
+   26 00000000         ; Returns: 
+   27 00000000         ;
+   28 00000000         ;*******************************************************
+                       ************************* 
+   29 00000000         ;; TODO -- Implement EABI compliant function init_leds
+   30 00000000         init_leds
+                               PROC
+   31 00000000         ;init LED color codes 
+   32 00000000         ; 25- 3F, 50- 7F, 75-BF
+   33 00000000 F647 7200 
+              F2C0 0200        MOV32            R2, #0x00007F00
+   34 00000008 6002            STR              R2, [R0, #0]
+   35 0000000A F647 7300 
+              F2C0 033F        MOV32            R3, #0x003F7F00
+   36 00000012 6043            STR              R3, [R0, #4]
+   37 00000014 F647 7400 
+              F2C0 047F        MOV32            R4, #0x007F7F00
+   38 0000001C 6084            STR              R4, [R0, #8]
+   39 0000001E F643 7500 
+              F2C0 057F        MOV32            R5, #0x007F3F00
+   40 00000026 60C5            STR              R5, [R0, #12]
+   41 00000028 F240 0600 
+              F2C0 067F        MOV32            R6, #0x007F0000
+   42 00000030 6106            STR              R6, [R0, #16]
+   43 00000032 F240 073F 
+              F2C0 077F        MOV32            R7, #0x007F003F
+   44 0000003A 6147            STR              R7, [R0, #20]
+   45 0000003C F240 087F 
+              F2C0 087F        MOV32            R8, #0x007F007F
+
+
+
+ARM Macro Assembler    Page 2 
+
+
+   46 00000044 F8C0 8018       STR              R8, [R0, #24]
+   47 00000048 F240 097F 
+              F2C0 093F        MOV32            R9, #0x003F007F
+   48 00000050 F8C0 901C       STR              R9, [R0, #28]
+   49 00000054         
+   50 00000054         ;clear the 32-bit value pointed to by update_led_addr
+   51 00000054 F240 0100 
+              F2C0 0100        MOV32            R1, #0
+   52 0000005C         
+   53 0000005C 4770            BX               LR          ; return from the f
+                                                            unction
+   54 0000005E                 ENDP
+   55 0000005E         
+   56 0000005E                 END
+Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4.fp --apcs=int
+erwork --depend=.\obj\init_leds.d -o.\obj\init_leds.o -I"C:\Users\user\Desktop\
+ECE 353\HW1\RTE\_HW1" -IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.1\CMSIS\Include -IC:\
+Keil_v5\ARM\PACK\Keil\TM4C_DFP\1.1.0\Device\Include\TM4C123 --predefine="__EVAL
+ SETA 1" --predefine="__MICROLIB SETA 1" --predefine="__UVISION_VERSION SETA 52
+2" --predefine="_RTE_ SETA 1" --predefine="TM4C123GH6PM SETA 1" --list=.\lst\in
+it_leds.lst init_leds.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+SRAM 00000000
+
+Symbol: SRAM
+   Definitions
+      At line 9 in file init_leds.s
+   Uses
+      None
+Comment: SRAM unused
+1 symbol
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+FLASH 00000000
+
+Symbol: FLASH
+   Definitions
+      At line 15 in file init_leds.s
+   Uses
+      None
+Comment: FLASH unused
+init_leds 00000000
+
+Symbol: init_leds
+   Definitions
+      At line 30 in file init_leds.s
+   Uses
+      At line 5 in file init_leds.s
+Comment: init_leds used once
+2 symbols
+339 symbols in table

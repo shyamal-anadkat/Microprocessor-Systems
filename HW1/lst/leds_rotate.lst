@@ -1,0 +1,119 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000         ; Filename:     leds_rotate.s
+    2 00000000         ; Author:       <Add Your Names> 
+    3 00000000         ; Description:  
+    4 00000000         
+    5 00000000                 export           leds_rotate
+    6 00000000         ;*******************************************************
+                       ************************* 
+    7 00000000         ; SRAM
+    8 00000000         ;*******************************************************
+                       ************************* 
+    9 00000000                 AREA             SRAM, READWRITE
+   10 00000000                 align
+   11 00000000         
+   12 00000000         ;*******************************************************
+                       ************************* 
+   13 00000000         ; Constant Variables (FLASH) Segment
+   14 00000000         ;*******************************************************
+                       ************************* 
+   15 00000000                 AREA             FLASH, CODE, READONLY
+   16 00000000                 align
+   17 00000000         
+   18 00000000         
+   19 00000000         ;*******************************************************
+                       ************************* 
+   20 00000000         ;*******************************************************
+                       *************************
+   21 00000000         leds_rotate
+                               PROC
+   22 00000000 F1A1 0201       SUB              R2, R1, #1  ; R2 contains array
+                                                            _size - 1, R1 was p
+                                                            assed array_size
+   23 00000004 EB00 0382       ADD              R3, R0, R2, LSL #2 ; R3 points 
+                                                            at last word in arr
+                                                            ay
+   24 00000008 6819            LDR              R1, [R3]    ; R1 = led_array_ad
+                                                            dr[array_size-1]
+   25 0000000A         rotate_loop
+   26 0000000A F853 2C04       LDR              R2, [R3,#-4]
+   27 0000000E F843 2904       STR              R2, [R3], #-4
+   28 00000012 4298            CMP              R0, R3      ; When R0 == R3 we 
+                                                            are done with all b
+                                                            ut last transfer
+   29 00000014 D1F9            BNE              rotate_loop
+   30 00000016 6019            STR              R1, [R3]    ; store the LED dat
+                                                            a that wraps around
+                                                            
+   31 00000018         
+   32 00000018 4770            BX               LR
+   33 0000001A                 ENDP
+   34 0000001A 00 00           align
+   35 0000001C         
+   36 0000001C         
+   37 0000001C                 END
+Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4.fp --apcs=int
+erwork --depend=.\obj\leds_rotate.d -o.\obj\leds_rotate.o -IC:\Users\Eric\Docum
+ents\ECE_Classes\ECE353\Spring17\HW\HW1_Keil\Staff\RTE -IC:\Keil_v5\ARM\PACK\AR
+M\CMSIS\4.5.0\CMSIS\Include -IC:\Keil_v5\ARM\PACK\Keil\TM4C_DFP\1.0.0\Device\In
+clude\TM4C123 --predefine="__EVAL SETA 1" --predefine="__MICROLIB SETA 1" --pre
+define="__UVISION_VERSION SETA 520" --predefine="_RTE_ SETA 1" --predefine="TM4
+
+
+
+ARM Macro Assembler    Page 2 
+
+
+C123GH6PM SETA 1" --list=.\lst\leds_rotate.lst leds_rotate.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+SRAM 00000000
+
+Symbol: SRAM
+   Definitions
+      At line 9 in file leds_rotate.s
+   Uses
+      None
+Comment: SRAM unused
+1 symbol
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+FLASH 00000000
+
+Symbol: FLASH
+   Definitions
+      At line 15 in file leds_rotate.s
+   Uses
+      None
+Comment: FLASH unused
+leds_rotate 00000000
+
+Symbol: leds_rotate
+   Definitions
+      At line 21 in file leds_rotate.s
+   Uses
+      At line 5 in file leds_rotate.s
+Comment: leds_rotate used once
+rotate_loop 0000000A
+
+Symbol: rotate_loop
+   Definitions
+      At line 25 in file leds_rotate.s
+   Uses
+      At line 29 in file leds_rotate.s
+Comment: rotate_loop used once
+3 symbols
+340 symbols in table

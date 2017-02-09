@@ -1,0 +1,131 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000         ; Filename:     leds_init.s
+    2 00000000         ; Author:       <Add Your Names> 
+    3 00000000         ; Description:  
+    4 00000000         
+    5 00000000         ;*******************************************************
+                       ************************* 
+    6 00000000         ; SRAM
+    7 00000000         ;*******************************************************
+                       ************************* 
+    8 00000000                 AREA             SRAM, READWRITE
+    9 00000000                 align
+   10 00000000         
+   11 00000000         ;*******************************************************
+                       ************************* 
+   12 00000000         ; Constant Variables (FLASH) Segment
+   13 00000000         ;*******************************************************
+                       ************************* 
+   14 00000000                 AREA             FLASH, CODE, READONLY
+   15 00000000                 align
+   16 00000000         
+   17 00000000                 export           leds_init
+   18 00000000         
+   19 00000000         ;*******************************************************
+                       ************************* 
+   20 00000000         ;*******************************************************
+                       ************************* 
+   21 00000000         leds_init
+                               PROC
+   22 00000000 F248 0200 
+              F2C0 0200        MOV32            R2, #0x00008000 ; Green 0%, Red
+                                                             50% Blue 0%
+   23 00000008 F840 2B04       STR              R2, [R0], #4 ; store into [R0]
+   24 0000000C F248 0200 
+              F2C0 0240        MOV32            R2, #0x00408000 ; Green 25%, Re
+                                                            d 50% Blue 0%
+   25 00000014 F840 2B04       STR              R2, [R0], #4 ; store into [R0]
+   26 00000018 F248 0200 
+              F2C0 0280        MOV32            R2, #0x00808000 ; Green 50%, Re
+                                                            d 50% Blue 0%
+   27 00000020 F840 2B04       STR              R2, [R0], #4 ; store into [R0]
+   28 00000024 F244 0200 
+              F2C0 0280        MOV32            R2, #0x00804000 ; Green 50%, Re
+                                                            d 25% Blue 0%
+   29 0000002C F840 2B04       STR              R2, [R0], #4 ; store into [R0]
+   30 00000030 F240 0200 
+              F2C0 0280        MOV32            R2, #0x00800000 ; Green 50%, Re
+                                                            d 0% Blue 0%
+   31 00000038 F840 2B04       STR              R2, [R0], #4 ; store into [R0]
+   32 0000003C F240 0240 
+              F2C0 0280        MOV32            R2, #0x00800040 ; Green 50%, Re
+                                                            d 0% Blue 25%
+   33 00000044 F840 2B04       STR              R2, [R0], #4 ; store into [R0]
+   34 00000048 F240 0280 
+              F2C0 0280        MOV32            R2, #0x00800080 ; Green 50%, Re
+                                                            d 0% Blue 50%
+   35 00000050 F840 2B04       STR              R2, [R0], #4 ; store into [R0]
+   36 00000054 F240 0240 
+              F2C0 0240        MOV32            R2, #0x00400040 ; Green 25%, Re
+                                                            d 0% Blue 25%
+
+
+
+ARM Macro Assembler    Page 2 
+
+
+   37 0000005C F840 2B04       STR              R2, [R0], #4 ; store into [R0]
+   38 00000060         
+   39 00000060 F04F 0200       MOV              R2, #0      ; write zero to UPD
+                                                            ATE_LEDS
+   40 00000064 600A            STR              R2, [R1]    ; R1 was passed in 
+                                                            update_led_addr
+   41 00000066         
+   42 00000066 4770            BX               LR          ; return from funct
+                                                            ion
+   43 00000068                 ENDP
+   44 00000068                 align
+   45 00000068         
+   46 00000068         
+   47 00000068                 END
+Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4.fp --apcs=int
+erwork --depend=.\obj\leds_init.d -o.\obj\leds_init.o -IC:\Users\Eric\Documents
+\ECE_Classes\ECE353\Spring17\HW\HW1_Keil\Staff\RTE -IC:\Keil_v5\ARM\PACK\ARM\CM
+SIS\4.5.0\CMSIS\Include -IC:\Keil_v5\ARM\PACK\Keil\TM4C_DFP\1.0.0\Device\Includ
+e\TM4C123 --predefine="__EVAL SETA 1" --predefine="__MICROLIB SETA 1" --predefi
+ne="__UVISION_VERSION SETA 520" --predefine="_RTE_ SETA 1" --predefine="TM4C123
+GH6PM SETA 1" --list=.\lst\leds_init.lst leds_init.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+SRAM 00000000
+
+Symbol: SRAM
+   Definitions
+      At line 8 in file leds_init.s
+   Uses
+      None
+Comment: SRAM unused
+1 symbol
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+FLASH 00000000
+
+Symbol: FLASH
+   Definitions
+      At line 14 in file leds_init.s
+   Uses
+      None
+Comment: FLASH unused
+leds_init 00000000
+
+Symbol: leds_init
+   Definitions
+      At line 21 in file leds_init.s
+   Uses
+      At line 17 in file leds_init.s
+Comment: leds_init used once
+2 symbols
+339 symbols in table

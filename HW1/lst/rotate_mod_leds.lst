@@ -1,0 +1,118 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000         ; Filename:     leds_rotate.s
+    2 00000000         ; Author:       Shyamal Anadkat
+    3 00000000         ; Description:  
+    4 00000000         
+    5 00000000                 export           rotate_mod_leds
+    6 00000000         ;*******************************************************
+                       ************************* 
+    7 00000000         ; SRAM
+    8 00000000         ;*******************************************************
+                       ************************* 
+    9 00000000                 AREA             SRAM, READWRITE
+   10 00000000                 align
+   11 00000000         
+   12 00000000         ;*******************************************************
+                       ************************* 
+   13 00000000         ; Constant Variables (FLASH) Segment
+   14 00000000         ;*******************************************************
+                       ************************* 
+   15 00000000                 AREA             FLASH, CODE, READONLY
+   16 00000000                 align
+   17 00000000         
+   18 00000000         ;*******************************************************
+                       ************************* 
+   19 00000000         ; Passed in pointer to LED data on R0, and size of array
+                        on R1
+   20 00000000         ; Will rotate led data with led_array_data[0] <-- led_ar
+                       ray_data[size-1] and
+   21 00000000         ; led_array_data[1] <-- led_array_data[0], ...  Also mod
+                       ifies data as it 
+   22 00000000         ; rotates it adding 0x08 to red, and subtracting 0x08 fr
+                       om blue, while leaving
+   23 00000000         ; green content unchanged.
+   24 00000000         ;*******************************************************
+                       *************************
+   25 00000000         ;; TODO -- implement EABI compliant function rotate_mod_
+                       leds
+   26 00000000         ;*******************************************************
+                       ************************* 
+   27 00000000         ; function rotate_mod_leds
+   28 00000000         ;  
+   29 00000000         ; Description: 
+   30 00000000         ;  rotates array of LED colors by index of 1
+   31 00000000         ; Parameters:
+   32 00000000         ;  RO - address of led array 
+   33 00000000         ;  R1 - array size   
+   34 00000000         ; Returns: 
+   35 00000000         ;
+   36 00000000         ;*******************************************************
+                       ************************* 
+   37 00000000         rotate_mod_leds
+                               PROC
+   38 00000000         
+   39 00000000         
+   40 00000000         
+   41 00000000         
+   42 00000000                 ENDP
+   43 00000000                 align
+   44 00000000         
+   45 00000000         
+
+
+
+ARM Macro Assembler    Page 2 
+
+
+   46 00000000                 END
+Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4.fp --apcs=int
+erwork --depend=.\obj\rotate_mod_leds.d -o.\obj\rotate_mod_leds.o -I"C:\Users\u
+ser\Desktop\ECE 353\HW1\RTE\_HW1" -IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.1\CMSIS\I
+nclude -IC:\Keil_v5\ARM\PACK\Keil\TM4C_DFP\1.1.0\Device\Include\TM4C123 --prede
+fine="__EVAL SETA 1" --predefine="__MICROLIB SETA 1" --predefine="__UVISION_VER
+SION SETA 522" --predefine="_RTE_ SETA 1" --predefine="TM4C123GH6PM SETA 1" --l
+ist=.\lst\rotate_mod_leds.lst rotate_mod_leds.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+SRAM 00000000
+
+Symbol: SRAM
+   Definitions
+      At line 9 in file rotate_mod_leds.s
+   Uses
+      None
+Comment: SRAM unused
+1 symbol
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+FLASH 00000000
+
+Symbol: FLASH
+   Definitions
+      At line 15 in file rotate_mod_leds.s
+   Uses
+      None
+Comment: FLASH unused
+rotate_mod_leds 00000000
+
+Symbol: rotate_mod_leds
+   Definitions
+      At line 37 in file rotate_mod_leds.s
+   Uses
+      At line 5 in file rotate_mod_leds.s
+Comment: rotate_mod_leds used once
+2 symbols
+338 symbols in table
