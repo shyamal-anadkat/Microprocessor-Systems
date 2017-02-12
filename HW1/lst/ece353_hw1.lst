@@ -56,52 +56,66 @@ ARM Macro Assembler    Page 1
                        LEDS    RN               R0
    30 00000000        1 
                        UPDATE  RN               R1
-   31 00000000         
-   32 00000000         ;*******************************************************
-                       ************************* 
+   31 00000000        2 
+                       GPIO    RN               R2
+   32 00000000         
    33 00000000         ;*******************************************************
                        ************************* 
-   34 00000000         hw1     PROC
-   35 00000000         ;Setup argument to pass to init_leds
+   34 00000000         ; function hw1
+   35 00000000         ;  
 
 
 
 ARM Macro Assembler    Page 2 
 
 
-   36 00000000 480E            LDR              LEDS, =(WS2812B_LEDS)
-   37 00000002 490F            LDR              UPDATE, =(UPDATE_LEDS)
-   38 00000004         ;call init_leds routine 
-   39 00000004 F7FF FFFE       BL               init_leds
-   40 00000008 F04F 0108       MOV              R1, #8
-   41 0000000C         
-   42 0000000C         infinite_loop
-   43 0000000C 490C            LDR              UPDATE, =(UPDATE_LEDS)
-   44 0000000E F04F 0300       MOV              R3, #0
-   45 00000012 428B            CMP              R3, UPDATE
-   46 00000014 D0FA            BEQ              infinite_loop
-   47 00000016         
-   48 00000016 B672            CPSID            I
-   49 00000018         ;set update-leds to 0 
-   50 00000018 F240 0900 
+   36 00000000         ; Description: 
+   37 00000000         ;  main
+   38 00000000         ; Parameters:  
+   39 00000000         ; Returns: 
+   40 00000000         ;*******************************************************
+                       ************************* 
+   41 00000000         hw1     PROC
+   42 00000000         
+   43 00000000         ;Setup argument to pass to init_leds
+   44 00000000 480E            LDR              LEDS, =(WS2812B_LEDS)
+   45 00000002 490F            LDR              UPDATE, =(UPDATE_LEDS)
+   46 00000004         
+   47 00000004         ;call init_leds routine 
+   48 00000004 F7FF FFFE       BL               init_leds
+   49 00000008 F04F 0108       MOV              R1, #8
+   50 0000000C         
+   51 0000000C         infinite_loop
+   52 0000000C         
+   53 0000000C         ;check if update_leds is non-zero to continue 
+   54 0000000C 490C            LDR              UPDATE, =(UPDATE_LEDS)
+   55 0000000E F04F 0300       MOV              R3, #0
+   56 00000012 428B            CMP              R3, UPDATE
+   57 00000014 D0FA            BEQ              infinite_loop
+   58 00000016         
+   59 00000016 B672            CPSID            I
+   60 00000018         
+   61 00000018         ;set update-leds to 0 
+   62 00000018 F240 0900 
               F2C0 0900        MOV32            R9, #0x00000000
-   51 00000020 F8C1 9000       STR              R9, [UPDATE]
-   52 00000024         
-   53 00000024 F04F 0108       MOV              R1, #8
-   54 00000028 F7FF FFFE       BL               rotate_mod_leds
-   55 0000002C         
-   56 0000002C F247 32FC 
-              F2C4 0200        MOV32            R2, #0x400073FC ;3rd arg 
-   57 00000034 F7FF FFFE       BL               write_leds
-   58 00000038         
-   59 00000038 B662            CPSIE            I
-   60 0000003A E7E7            B                infinite_loop
-   61 0000003C         
-   62 0000003C                 ENDP
-   63 0000003C                 align
-   64 0000003C         
-   65 0000003C         
-   66 0000003C                 END
+   63 00000020 F8C1 9000       STR              R9, [UPDATE]
+   64 00000024         
+   65 00000024         ;call rotate_mod_leds
+   66 00000024 F04F 0108       MOV              R1, #8
+   67 00000028 F7FF FFFE       BL               rotate_mod_leds
+   68 0000002C         
+   69 0000002C F247 32FC 
+              F2C4 0200        MOV32            GPIO, #0x400073FC ;3rd arg 
+   70 00000034 F7FF FFFE       BL               write_leds
+   71 00000038         
+   72 00000038 B662            CPSIE            I
+   73 0000003A E7E7            B                infinite_loop
+   74 0000003C         
+   75 0000003C                 ENDP
+   76 0000003C                 align
+   77 0000003C         
+   78 0000003C         
+   79 0000003C                 END
               00000000 
               00000000 
 Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4.fp --apcs=int
@@ -132,8 +146,8 @@ Symbol: UPDATE_LEDS
       At line 16 in file ece353_hw1.s
    Uses
       At line 7 in file ece353_hw1.s
-      At line 37 in file ece353_hw1.s
-      At line 43 in file ece353_hw1.s
+      At line 45 in file ece353_hw1.s
+      At line 54 in file ece353_hw1.s
 
 WS2812B_LEDS 00000000
 
@@ -142,7 +156,7 @@ Symbol: WS2812B_LEDS
       At line 15 in file ece353_hw1.s
    Uses
       At line 6 in file ece353_hw1.s
-      At line 36 in file ece353_hw1.s
+      At line 44 in file ece353_hw1.s
 
 3 symbols
 
@@ -163,7 +177,7 @@ hw1 00000000
 
 Symbol: hw1
    Definitions
-      At line 34 in file ece353_hw1.s
+      At line 41 in file ece353_hw1.s
    Uses
       At line 5 in file ece353_hw1.s
 Comment: hw1 used once
@@ -171,10 +185,10 @@ infinite_loop 0000000C
 
 Symbol: infinite_loop
    Definitions
-      At line 42 in file ece353_hw1.s
+      At line 51 in file ece353_hw1.s
    Uses
-      At line 46 in file ece353_hw1.s
-      At line 60 in file ece353_hw1.s
+      At line 57 in file ece353_hw1.s
+      At line 73 in file ece353_hw1.s
 
 3 symbols
 
@@ -189,7 +203,7 @@ Symbol: init_leds
    Definitions
       At line 8 in file ece353_hw1.s
    Uses
-      At line 39 in file ece353_hw1.s
+      At line 48 in file ece353_hw1.s
 Comment: init_leds used once
 rotate_mod_leds 00000000
 
@@ -197,7 +211,7 @@ Symbol: rotate_mod_leds
    Definitions
       At line 9 in file ece353_hw1.s
    Uses
-      At line 54 in file ece353_hw1.s
+      At line 67 in file ece353_hw1.s
 Comment: rotate_mod_leds used once
 write_leds 00000000
 
@@ -205,7 +219,7 @@ Symbol: write_leds
    Definitions
       At line 10 in file ece353_hw1.s
    Uses
-      At line 57 in file ece353_hw1.s
+      At line 70 in file ece353_hw1.s
 Comment: write_leds used once
 3 symbols
-349 symbols in table
+350 symbols in table

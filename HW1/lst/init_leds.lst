@@ -50,10 +50,10 @@ ARM Macro Assembler    Page 1
    33 00000000         ;
    34 00000000         ;*******************************************************
                        ************************* 
-   35 00000000         ;; TODO -- Implement EABI compliant function init_leds
-   36 00000000         init_leds
+   35 00000000         init_leds
                                PROC
-   37 00000000 E92D 03FC       PUSH             {R2-R9}
+   36 00000000 E92D 03FC       PUSH             {R2-R9}     ; save regs used 
+   37 00000004         
    38 00000004         ;init LED color codes 
    39 00000004         ;25- 3F, 50- 7F, 75 - BF
    40 00000004 F647 7200 
@@ -92,7 +92,8 @@ ARM Macro Assembler    Page 2
               F2C0 0900        MOV32            R9, #0x00000000
    59 00000060 F8C1 9000       STR              R9, [UPDATE_LED_ADDR]
    60 00000064         
-   61 00000064 E8BD 03FC       POP              {R2-R9}     ; restore regs
+   61 00000064 E8BD 03FC       POP              {R2-R9}     ; restore regs used
+                                                            
    62 00000068 4770            BX               LR          ; return from the f
                                                             unction
    63 0000006A                 ENDP
@@ -138,7 +139,7 @@ init_leds 00000000
 
 Symbol: init_leds
    Definitions
-      At line 36 in file init_leds.s
+      At line 35 in file init_leds.s
    Uses
       At line 5 in file init_leds.s
 Comment: init_leds used once

@@ -20,8 +20,11 @@
 ;****************************************
 LED_ARRAY_ADDR 	RN R0	; passed in as argument
 ARRAY_SIZE  	RN R1	; passed in as argument
+UPDATE_COLOR	RN R3
 RED				RN R4
 BLUE			RN R5
+PREV_INDEX  	RN R6
+POST_INDEX		RN R7
 PREV			RN R10
 		
 ;******************************************************************************** 
@@ -45,35 +48,37 @@ PREV			RN R10
 ;******************************************************************************** 
 rotate_mod_leds PROC
 	PUSH {R2-R11} ; save reg
+	
 	SUB R2, ARRAY_SIZE, #1 ;arraysize -1 
-	MOV RED	, #0x00000800
-	MOV BLUE, #0x00000008
+	MOV RED	, #0x00000800  ;change in red
+	MOV BLUE, #0x00000008  ;change in blue
 	MOV R9, #4
 	
+	;led_array[0] <- led_arrat[size-1] - 0x08 on red, + 0x08 on blue
 	MUL R11, R9, R2
-	LDR R3, [LED_ARRAY_ADDR, R11] ; R3 = ledarray[size-1] 
-	;SUB R3, R3, RED   ; -0x08 on red 
-	;ADD R3, R3, BLUE   ; +0x08 on blue 
-	LDR PREV, [LED_ARRAY_ADDR, #0]
-	STR R3, [LED_ARRAY_ADDR, #0] ; write to addr
+	LDR UPDATE_COLOR, [LED_ARRAY_ADDR, R11] ; R3 = ledarray[size-1] 
+	SUB UPDATE_COLOR, UPDATE_COLOR, RED     ; -0x08 on red 
+	ADD UPDATE_COLOR, UPDATE_COLOR, BLUE    ; +0x08 on blue 
+	LDR PREV, [LED_ARRAY_ADDR, #0]          ; store previous led data
+	STR UPDATE_COLOR, [LED_ARRAY_ADDR, #0]  ; write to led_addr
 	
-	MOV R6, #0       ; counter 
-	MOV R7, #0
+	MOV PREV_INDEX , #0       ; counter 
+	MOV POST_INDEX, #0
 LOOP_BEGIN
     ; till array_size -1
-	ADD R6, R6, #4   ; increment counter
+	ADD PREV_INDEX , PREV_INDEX , #4   ; increment counter
 	MUL R8, ARRAY_SIZE, R9
-	CMP R6, R8
+	CMP PREV_INDEX , R8
 	BEQ LOOP_END
 	
-	; led[R7] = led[R6] - 0x08 on red, + 0x08 on blue 
-	MOV R3, PREV
-	;SUB R3, R3, RED   ; -0x08 on red 
-	;ADD R3, R3, BLUE   ; +0x08 on blue 
-	LDR PREV, [LED_ARRAY_ADDR, R6]
-	STR R3, [LED_ARRAY_ADDR, R6] ;  write to addr
+	; led[POST_INDEX] = led[PREV_INDEX] - 0x08 on red, + 0x08 on blue 
+	MOV UPDATE_COLOR, PREV
+	SUB UPDATE_COLOR, UPDATE_COLOR, RED     ; -0x08 on red 
+	ADD UPDATE_COLOR, UPDATE_COLOR, BLUE    ; +0x08 on blue 
+	LDR PREV, [LED_ARRAY_ADDR, PREV_INDEX ] ; persist previous led data
+	STR UPDATE_COLOR, [LED_ARRAY_ADDR, PREV_INDEX ] ; write to led_addr
 	
-	ADD R7, R7, #4   ; increment cntr
+	ADD POST_INDEX, POST_INDEX, #4   ; increment cntr
 	B LOOP_BEGIN
 LOOP_END
 

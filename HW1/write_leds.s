@@ -22,7 +22,13 @@ LOGIC_LOW		RN R6	; used to store a 0x00 for wrting logic low to GPIO
 DELAY_INDX		RN R7	; used as index in delay loops
 BIT_INDX		RN R8	; used as bit index for 24-bit loop
 
-;******************************************************************************** 
+;********************************************************************************
+; function write_leds
+;  
+; Description: 
+;		writes to leds and maintains neopixels
+; Parameters:	
+; Returns: 
 ;********************************************************************************        
 write_leds   PROC
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -57,7 +63,7 @@ bit_loop
 high_delay1					; loop below takes (N-1)*4+2 clock cycles.  Using N of 7, to get 30 cyles of delay
 	SUBS	DELAY_INDX, DELAY_INDX, #1
 	BNE		high_delay1
-	;; add 6 NOPs to flush out needed delay for total of 40 clocks with logic high on pin
+	;; Add 6 NOPs to flush out needed delay for total of 40 clocks with logic high on pin
 	NOP
 	NOP
 	NOP
@@ -72,7 +78,7 @@ low_delay1
 	NOP
 	SUBS	BIT_INDX, BIT_INDX, #1		; decrement bit index
 	BEQ		write_loop					; done with this 24-bits of LED data, move on to next 24-bits of LED data
-	;; add NOPs to flush out needed delay for total of 22 clocks with logic low on pin
+	; NOPs to flush out needed delay for total of 22 clocks with logic low on pin
 	NOP
 	NOP
 	NOP
@@ -89,7 +95,7 @@ write_zero
 high_delay0
 	SUBS	DELAY_INDX, DELAY_INDX, #1
 	BNE		high_delay0
-	;; add NOPs to flush out needed delay for total of 20 clocks with logic high on pin
+	; NOPs to flush out needed delay for total of 20 clocks with logic high on pin
 	NOP
 	NOP
 	NOP
@@ -102,7 +108,7 @@ low_delay0
 	NOP
 	SUBS	BIT_INDX, BIT_INDX, #1	; decrement bit index
 	BEQ		write_loop				; done with this 24-bits of LED data, move on to next 24-bits of LED data
-	;; add NOPs to flush out needed delay for total of 42 clocks with logic low on pin
+	; NOPs to flush out needed delay for total of 42 clocks with logic low on pin
 	NOP
 	NOP
 	NOP

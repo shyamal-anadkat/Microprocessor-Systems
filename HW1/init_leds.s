@@ -32,9 +32,9 @@ UPDATE_LED_ADDR	RN R1	; passed in as argument
 ; Returns: 
 ;
 ;******************************************************************************** 
-	;; TODO -- Implement EABI compliant function init_leds
 init_leds PROC
-	PUSH {R2-R9}
+	PUSH {R2-R9}  ; save regs used 
+	
 	;init LED color codes 
 	;25- 3F, 50- 7F, 75 - BF
 	MOV32 R2, #0x00007F00
@@ -58,7 +58,7 @@ init_leds PROC
 	MOV32 R9, #0x00000000
 	STR R9, [UPDATE_LED_ADDR]
 	
-	POP {R2-R9} ; restore regs
+	POP {R2-R9} ; restore regs used
 	BX LR ; return from the function
 	ENDP
 		
