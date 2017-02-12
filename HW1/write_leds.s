@@ -32,7 +32,7 @@ write_leds   PROC
 	;; the LEDs are connected to                             ;;
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	
-	;; TODO -- Store off registers modified to make EABI compliant
+	PUSH {R0-R8}  ; Store off registers modified to mLake EABI compliant
 
 	MOV		LOGIC_HIGH, #0x80		; used to write a 1 to port pin
 	MOV		LOGIC_LOW, #0x00		; used to write a 0 to port pin
@@ -57,7 +57,13 @@ bit_loop
 high_delay1					; loop below takes (N-1)*4+2 clock cycles.  Using N of 7, to get 30 cyles of delay
 	SUBS	DELAY_INDX, DELAY_INDX, #1
 	BNE		high_delay1
-	;; TODO -- add NOPs to flush out needed delay for total of 40 clocks with logic high on pin
+	;; add 6 NOPs to flush out needed delay for total of 40 clocks with logic high on pin
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
 	STRB	LOGIC_LOW,	[GPIO_ADDR]		; clear GPIO pin as part of a write of "1" to LED, now need 22 low cycles
 	MOV		DELAY_INDX, #3				; (3-1)*4+2 = 10 clock cycles delay, need 22 low prior to next write of "1"
 low_delay1
@@ -66,7 +72,16 @@ low_delay1
 	NOP
 	SUBS	BIT_INDX, BIT_INDX, #1		; decrement bit index
 	BEQ		write_loop					; done with this 24-bits of LED data, move on to next 24-bits of LED data
-	;; TODO -- add NOPs to flush out needed delay for total of 22 clocks with logic low on pin
+	;; add NOPs to flush out needed delay for total of 22 clocks with logic low on pin
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
     B		bit_loop
 	
 write_zero
@@ -74,7 +89,11 @@ write_zero
 high_delay0
 	SUBS	DELAY_INDX, DELAY_INDX, #1
 	BNE		high_delay0
-	;; TODO -- add NOPs to flush out needed delay for total of 20 clocks with logic high on pin
+	;; add NOPs to flush out needed delay for total of 20 clocks with logic high on pin
+	NOP
+	NOP
+	NOP
+	NOP
 	STRB	LOGIC_LOW,	[GPIO_ADDR]	; clear GPIO pin
 	MOV		DELAY_INDX, #8			; (8-1)*4+2 = 30 clock cycles, need 42 low
 low_delay0
@@ -83,12 +102,21 @@ low_delay0
 	NOP
 	SUBS	BIT_INDX, BIT_INDX, #1	; decrement bit index
 	BEQ		write_loop				; done with this 24-bits of LED data, move on to next 24-bits of LED data
-	;; TODO -- add NOPs to flush out needed delay for total of 42 clocks with logic low on pin
+	;; add NOPs to flush out needed delay for total of 42 clocks with logic low on pin
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
     B		bit_loop
 	
 done_write
-	;; TODO -- Restore registers prior to return
-	;; TODO -- Return from function
+	POP {R0-R8}		;Restore registers prior to return
+	BX LR ; return from the function
     ENDP
     align        
     

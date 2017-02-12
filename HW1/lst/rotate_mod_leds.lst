@@ -25,58 +25,119 @@ ARM Macro Assembler    Page 1
    15 00000000                 AREA             FLASH, CODE, READONLY
    16 00000000                 align
    17 00000000         
-   18 00000000         ;*******************************************************
+   18 00000000         ;****************************************
+   19 00000000         ; Rename registers for coad readability *
+   20 00000000         ;****************************************
+   21 00000000        0 
+                       LED_ARRAY_ADDR
+                               RN               R0          ; passed in as argu
+                                                            ment
+   22 00000000        1 
+                       ARRAY_SIZE
+                               RN               R1          ; passed in as argu
+                                                            ment
+   23 00000000        4 
+                       RED     RN               R4
+   24 00000000        5 
+                       BLUE    RN               R5
+   25 00000000        A 
+                       PREV    RN               R10
+   26 00000000         
+   27 00000000         ;*******************************************************
                        ************************* 
-   19 00000000         ; Passed in pointer to LED data on R0, and size of array
+   28 00000000         ; Passed in pointer to LED data on R0, and size of array
                         on R1
-   20 00000000         ; Will rotate led data with led_array_data[0] <-- led_ar
+   29 00000000         ; Will rotate led data with led_array_data[0] <-- led_ar
                        ray_data[size-1] and
-   21 00000000         ; led_array_data[1] <-- led_array_data[0], ...  Also mod
+   30 00000000         ; led_array_data[1] <-- led_array_data[0], ...  Also mod
                        ifies data as it 
-   22 00000000         ; rotates it adding 0x08 to red, and subtracting 0x08 fr
+   31 00000000         ; rotates it adding 0x08 to red, and subtracting 0x08 fr
                        om blue, while leaving
-   23 00000000         ; green content unchanged.
-   24 00000000         ;*******************************************************
+   32 00000000         ; green content unchanged.
+   33 00000000         ;*******************************************************
                        *************************
-   25 00000000         ;; TODO -- implement EABI compliant function rotate_mod_
-                       leds
-   26 00000000         ;*******************************************************
+   34 00000000         ;; implement EABI compliant function rotate_mod_leds
+   35 00000000         ;*******************************************************
                        ************************* 
-   27 00000000         ; function rotate_mod_leds
-   28 00000000         ;  
-   29 00000000         ; Description: 
-   30 00000000         ;  rotates array of LED colors by index of 1
-   31 00000000         ; Parameters:
-   32 00000000         ;  RO - address of led array 
-   33 00000000         ;  R1 - array size   
-   34 00000000         ; Returns: 
-   35 00000000         ;
-   36 00000000         ;*******************************************************
-                       ************************* 
-   37 00000000         rotate_mod_leds
-                               PROC
-   38 00000000         
-   39 00000000         
-   40 00000000         
-   41 00000000         
-   42 00000000                 ENDP
-   43 00000000                 align
-   44 00000000         
-   45 00000000         
+   36 00000000         ; function rotate_mod_leds
+   37 00000000         ;  
+   38 00000000         ; Description: 
+   39 00000000         ;  rotates array of LED colors by index of 1
 
 
 
 ARM Macro Assembler    Page 2 
 
 
-   46 00000000                 END
+   40 00000000         ; Parameters:
+   41 00000000         ;  RO - address of led array 
+   42 00000000         ;  R1 - array size   
+   43 00000000         ; Returns: 
+   44 00000000         ;
+   45 00000000         ;*******************************************************
+                       ************************* 
+   46 00000000         rotate_mod_leds
+                               PROC
+   47 00000000 E92D 0FFC       PUSH             {R2-R11}    ; save reg
+   48 00000004 F1A1 0201       SUB              R2, ARRAY_SIZE, #1 
+                                                            ;arraysize -1 
+   49 00000008 F44F 6400       MOV              RED , #0x00000800
+   50 0000000C F04F 0508       MOV              BLUE, #0x00000008
+   51 00000010 F04F 0904       MOV              R9, #4
+   52 00000014         
+   53 00000014 FB09 FB02       MUL              R11, R9, R2
+   54 00000018 F850 300B       LDR              R3, [LED_ARRAY_ADDR, R11] ; R3 
+                                                            = ledarray[size-1] 
+                                                            
+   55 0000001C         ;SUB R3, R3, RED   ; -0x08 on red 
+   56 0000001C         ;ADD R3, R3, BLUE   ; +0x08 on blue 
+   57 0000001C F8D0 A000       LDR              PREV, [LED_ARRAY_ADDR, #0]
+   58 00000020 6003            STR              R3, [LED_ARRAY_ADDR, #0] 
+                                                            ; write to addr
+   59 00000022         
+   60 00000022 F04F 0600       MOV              R6, #0      ; counter 
+   61 00000026 F04F 0700       MOV              R7, #0
+   62 0000002A         LOOP_BEGIN
+   63 0000002A         ; till array_size -1
+   64 0000002A F106 0604       ADD              R6, R6, #4  ; increment counter
+                                                            
+   65 0000002E FB01 F809       MUL              R8, ARRAY_SIZE, R9
+   66 00000032 4546            CMP              R6, R8
+   67 00000034 D006            BEQ              LOOP_END
+   68 00000036         
+   69 00000036         ; led[R7] = led[R6] - 0x08 on red, + 0x08 on blue 
+   70 00000036 4653            MOV              R3, PREV
+   71 00000038         ;SUB R3, R3, RED   ; -0x08 on red 
+   72 00000038         ;ADD R3, R3, BLUE   ; +0x08 on blue 
+   73 00000038 F850 A006       LDR              PREV, [LED_ARRAY_ADDR, R6]
+   74 0000003C 5183            STR              R3, [LED_ARRAY_ADDR, R6] 
+                                                            ;  write to addr
+   75 0000003E         
+   76 0000003E F107 0704       ADD              R7, R7, #4  ; increment cntr
+   77 00000042 E7F2            B                LOOP_BEGIN
+   78 00000044         LOOP_END
+   79 00000044         
+   80 00000044 E8BD 0FFC       POP              {R2-R11}    ; restore regs
+   81 00000048 4770            BX               LR          ;return from functi
+                                                            on
+   82 0000004A                 ENDP
+   83 0000004A 00 00           align
+   84 0000004C         
+   85 0000004C         
+   86 0000004C                 END
 Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4.fp --apcs=int
-erwork --depend=.\obj\rotate_mod_leds.d -o.\obj\rotate_mod_leds.o -I"C:\Users\u
-ser\Desktop\ECE 353\HW1\RTE\_HW1" -IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.1\CMSIS\I
-nclude -IC:\Keil_v5\ARM\PACK\Keil\TM4C_DFP\1.1.0\Device\Include\TM4C123 --prede
-fine="__EVAL SETA 1" --predefine="__MICROLIB SETA 1" --predefine="__UVISION_VER
-SION SETA 522" --predefine="_RTE_ SETA 1" --predefine="TM4C123GH6PM SETA 1" --l
-ist=.\lst\rotate_mod_leds.lst rotate_mod_leds.s
+erwork --depend=.\obj\rotate_mod_leds.d -o.\obj\rotate_mod_leds.o -IC:\ECE353\H
+W1\RTE\_HW1 -IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.1\CMSIS\Include -IC:\Keil_v5\AR
+
+
+
+ARM Macro Assembler    Page 3 
+
+
+M\PACK\Keil\TM4C_DFP\1.1.0\Device\Include\TM4C123 --predefine="__EVAL SETA 1" -
+-predefine="__MICROLIB SETA 1" --predefine="__UVISION_VERSION SETA 522" --prede
+fine="_RTE_ SETA 1" --predefine="TM4C123GH6PM SETA 1" --list=.\lst\rotate_mod_l
+eds.lst rotate_mod_leds.s
 
 
 
@@ -106,13 +167,29 @@ Symbol: FLASH
    Uses
       None
 Comment: FLASH unused
+LOOP_BEGIN 0000002A
+
+Symbol: LOOP_BEGIN
+   Definitions
+      At line 62 in file rotate_mod_leds.s
+   Uses
+      At line 77 in file rotate_mod_leds.s
+Comment: LOOP_BEGIN used once
+LOOP_END 00000044
+
+Symbol: LOOP_END
+   Definitions
+      At line 78 in file rotate_mod_leds.s
+   Uses
+      At line 67 in file rotate_mod_leds.s
+Comment: LOOP_END used once
 rotate_mod_leds 00000000
 
 Symbol: rotate_mod_leds
    Definitions
-      At line 37 in file rotate_mod_leds.s
+      At line 46 in file rotate_mod_leds.s
    Uses
       At line 5 in file rotate_mod_leds.s
 Comment: rotate_mod_leds used once
-2 symbols
-338 symbols in table
+4 symbols
+346 symbols in table

@@ -15,6 +15,12 @@
     AREA    FLASH, CODE, READONLY
     align
 		
+;****************************************
+; Rename registers for coad readability *
+;****************************************
+LED_ARRAY_ADDR 	RN R0	; passed in as argument
+UPDATE_LED_ADDR	RN R1	; passed in as argument
+		
 ;******************************************************************************** 
 ; function init_leds
 ;  
@@ -28,28 +34,31 @@
 ;******************************************************************************** 
 	;; TODO -- Implement EABI compliant function init_leds
 init_leds PROC
+	PUSH {R2-R9}
 	;init LED color codes 
-	; 25- 3F, 50- 7F, 75-BF
+	;25- 3F, 50- 7F, 75 - BF
 	MOV32 R2, #0x00007F00
-	STR R2, [R0, #0]
+	STR R2, [LED_ARRAY_ADDR, #0]
 	MOV32 R3, #0x003F7F00
-	STR R3, [R0, #4]
+	STR R3, [LED_ARRAY_ADDR, #4]
 	MOV32 R4, #0x007F7F00
-	STR R4, [R0, #8]
+	STR R4, [LED_ARRAY_ADDR, #8]
 	MOV32 R5, #0x007F3F00
-	STR R5, [R0, #12]
+	STR R5, [LED_ARRAY_ADDR, #12]
 	MOV32 R6, #0x007F0000
-	STR R6, [R0, #16]
+	STR R6, [LED_ARRAY_ADDR, #16]
 	MOV32 R7, #0x007F003F
-	STR R7, [R0, #20]
+	STR R7, [LED_ARRAY_ADDR, #20]
 	MOV32 R8, #0x007F007F
-	STR R8, [R0, #24]
+	STR R8, [LED_ARRAY_ADDR, #24]
 	MOV32 R9, #0x003F007F
-	STR R9, [R0, #28]
+	STR R9, [LED_ARRAY_ADDR, #28]
 
 	;clear the 32-bit value pointed to by update_led_addr
-	MOV32 R1, #0
+	MOV32 R9, #0x00000000
+	STR R9, [UPDATE_LED_ADDR]
 	
+	POP {R2-R9} ; restore regs
 	BX LR ; return from the function
 	ENDP
 		

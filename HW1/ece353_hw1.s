@@ -22,19 +22,41 @@ UPDATE_LEDS		SPACE	4
 ;******************************************************************************** 
     AREA    FLASH, CODE, READONLY
     align
+		
+;****************************************
+; Rename registers for coad readability *
+;****************************************
+LEDS      RN R0	
+UPDATE    RN R1	 
   
 ;******************************************************************************** 
 ;******************************************************************************** 
 hw1   PROC
-
-	;; TODO -- Setup argument to pass to init_leds
-	LDR  R0, =(WS2812B_LEDS)
-	LDR  R1, =(UPDATE_LEDS)
-	;; TODO -- call init_leds routine
+	;Setup argument to pass to init_leds
+	LDR  LEDS, =(WS2812B_LEDS)
+	LDR  UPDATE, =(UPDATE_LEDS)
+	;call init_leds routine	
     BL init_leds
+	MOV R1, #8 
+
 infinite_loop
-	;; TODO -- do stuff specified in HW1 problem statement
+    LDR  UPDATE, =(UPDATE_LEDS)
+	MOV R3, #0
+	CMP R3, UPDATE
+	BEQ infinite_loop
+	
+	CPSID I 
+	;set update-leds to 0 
+	MOV32 R9, #0x00000000
+	STR R9, [UPDATE]
+	
+	MOV R1, #8 
+	BL rotate_mod_leds
+	
+	MOV32 R2, #0x400073FC ;3rd arg 
 	BL write_leds
+	
+	CPSIE I 
 	B		infinite_loop
 	
     ENDP

@@ -49,42 +49,68 @@ ARM Macro Assembler    Page 1
    23 00000024                 AREA             FLASH, CODE, READONLY
    24 00000000                 align
    25 00000000         
-   26 00000000         ;*******************************************************
+   26 00000000         ;****************************************
+   27 00000000         ; Rename registers for coad readability *
+   28 00000000         ;****************************************
+   29 00000000        0 
+                       LEDS    RN               R0
+   30 00000000        1 
+                       UPDATE  RN               R1
+   31 00000000         
+   32 00000000         ;*******************************************************
                        ************************* 
-   27 00000000         ;*******************************************************
+   33 00000000         ;*******************************************************
                        ************************* 
-   28 00000000         hw1     PROC
-   29 00000000         
-   30 00000000         ;; TODO -- Setup argument to pass to init_leds
-   31 00000000 4803            LDR              R0, =(WS2812B_LEDS)
-   32 00000002 4904            LDR              R1, =(UPDATE_LEDS)
-   33 00000004         ;; TODO -- call init_leds routine
-   34 00000004 F7FF FFFE       BL               init_leds
-   35 00000008         infinite_loop
-   36 00000008         ;; TODO -- do stuff specified in HW1 problem statement
-   37 00000008 F7FF FFFE       BL               write_leds
+   34 00000000         hw1     PROC
+   35 00000000         ;Setup argument to pass to init_leds
 
 
 
 ARM Macro Assembler    Page 2 
 
 
-   38 0000000C E7FC            B                infinite_loop
-   39 0000000E         
-   40 0000000E                 ENDP
-   41 0000000E 00 00           align
-   42 00000010         
-   43 00000010         
-   44 00000010                 END
+   36 00000000 480E            LDR              LEDS, =(WS2812B_LEDS)
+   37 00000002 490F            LDR              UPDATE, =(UPDATE_LEDS)
+   38 00000004         ;call init_leds routine 
+   39 00000004 F7FF FFFE       BL               init_leds
+   40 00000008 F04F 0108       MOV              R1, #8
+   41 0000000C         
+   42 0000000C         infinite_loop
+   43 0000000C 490C            LDR              UPDATE, =(UPDATE_LEDS)
+   44 0000000E F04F 0300       MOV              R3, #0
+   45 00000012 428B            CMP              R3, UPDATE
+   46 00000014 D0FA            BEQ              infinite_loop
+   47 00000016         
+   48 00000016 B672            CPSID            I
+   49 00000018         ;set update-leds to 0 
+   50 00000018 F240 0900 
+              F2C0 0900        MOV32            R9, #0x00000000
+   51 00000020 F8C1 9000       STR              R9, [UPDATE]
+   52 00000024         
+   53 00000024 F04F 0108       MOV              R1, #8
+   54 00000028 F7FF FFFE       BL               rotate_mod_leds
+   55 0000002C         
+   56 0000002C F247 32FC 
+              F2C4 0200        MOV32            R2, #0x400073FC ;3rd arg 
+   57 00000034 F7FF FFFE       BL               write_leds
+   58 00000038         
+   59 00000038 B662            CPSIE            I
+   60 0000003A E7E7            B                infinite_loop
+   61 0000003C         
+   62 0000003C                 ENDP
+   63 0000003C                 align
+   64 0000003C         
+   65 0000003C         
+   66 0000003C                 END
               00000000 
               00000000 
 Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4.fp --apcs=int
-erwork --depend=.\obj\ece353_hw1.d -o.\obj\ece353_hw1.o -I"C:\Users\user\Deskto
-p\ECE 353\HW1\RTE\_HW1" -IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.1\CMSIS\Include -IC
-:\Keil_v5\ARM\PACK\Keil\TM4C_DFP\1.1.0\Device\Include\TM4C123 --predefine="__EV
-AL SETA 1" --predefine="__MICROLIB SETA 1" --predefine="__UVISION_VERSION SETA 
-522" --predefine="_RTE_ SETA 1" --predefine="TM4C123GH6PM SETA 1" --list=.\lst\
-ece353_hw1.lst ece353_hw1.s
+erwork --depend=.\obj\ece353_hw1.d -o.\obj\ece353_hw1.o -IC:\ECE353\HW1\RTE\_HW
+1 -IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.1\CMSIS\Include -IC:\Keil_v5\ARM\PACK\Kei
+l\TM4C_DFP\1.1.0\Device\Include\TM4C123 --predefine="__EVAL SETA 1" --predefine
+="__MICROLIB SETA 1" --predefine="__UVISION_VERSION SETA 522" --predefine="_RTE
+_ SETA 1" --predefine="TM4C123GH6PM SETA 1" --list=.\lst\ece353_hw1.lst ece353_
+hw1.s
 
 
 
@@ -106,7 +132,8 @@ Symbol: UPDATE_LEDS
       At line 16 in file ece353_hw1.s
    Uses
       At line 7 in file ece353_hw1.s
-      At line 32 in file ece353_hw1.s
+      At line 37 in file ece353_hw1.s
+      At line 43 in file ece353_hw1.s
 
 WS2812B_LEDS 00000000
 
@@ -115,7 +142,7 @@ Symbol: WS2812B_LEDS
       At line 15 in file ece353_hw1.s
    Uses
       At line 6 in file ece353_hw1.s
-      At line 31 in file ece353_hw1.s
+      At line 36 in file ece353_hw1.s
 
 3 symbols
 
@@ -136,18 +163,19 @@ hw1 00000000
 
 Symbol: hw1
    Definitions
-      At line 28 in file ece353_hw1.s
+      At line 34 in file ece353_hw1.s
    Uses
       At line 5 in file ece353_hw1.s
 Comment: hw1 used once
-infinite_loop 00000008
+infinite_loop 0000000C
 
 Symbol: infinite_loop
    Definitions
-      At line 35 in file ece353_hw1.s
+      At line 42 in file ece353_hw1.s
    Uses
-      At line 38 in file ece353_hw1.s
-Comment: infinite_loop used once
+      At line 46 in file ece353_hw1.s
+      At line 60 in file ece353_hw1.s
+
 3 symbols
 
 
@@ -161,7 +189,7 @@ Symbol: init_leds
    Definitions
       At line 8 in file ece353_hw1.s
    Uses
-      At line 34 in file ece353_hw1.s
+      At line 39 in file ece353_hw1.s
 Comment: init_leds used once
 rotate_mod_leds 00000000
 
@@ -169,15 +197,15 @@ Symbol: rotate_mod_leds
    Definitions
       At line 9 in file ece353_hw1.s
    Uses
-      None
-Comment: rotate_mod_leds unused
+      At line 54 in file ece353_hw1.s
+Comment: rotate_mod_leds used once
 write_leds 00000000
 
 Symbol: write_leds
    Definitions
       At line 10 in file ece353_hw1.s
    Uses
-      At line 37 in file ece353_hw1.s
+      At line 57 in file ece353_hw1.s
 Comment: write_leds used once
 3 symbols
-347 symbols in table
+349 symbols in table
