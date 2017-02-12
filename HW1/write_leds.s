@@ -1,6 +1,6 @@
 ; Filename:     leds_write.s
 ; Author:       Shyamal Anadkat
-; Description:  
+; Description:  writing to leds
 
 	export write_leds
 ;******************************************************************************** 
@@ -38,7 +38,7 @@ write_leds   PROC
 	;; the LEDs are connected to                             ;;
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	
-	PUSH {R0-R8}  ; Store off registers modified to mLake EABI compliant
+	PUSH {R4-R8}  ; Store off registers modified to mLake EABI compliant
 
 	MOV		LOGIC_HIGH, #0x80		; used to write a 1 to port pin
 	MOV		LOGIC_LOW, #0x00		; used to write a 0 to port pin
@@ -121,7 +121,7 @@ low_delay0
     B		bit_loop
 	
 done_write
-	POP {R0-R8}		;Restore registers prior to return
+	POP {R4-R8}		;Restore registers prior to return
 	BX LR ; return from the function
     ENDP
     align        

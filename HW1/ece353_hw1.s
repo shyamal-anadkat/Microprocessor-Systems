@@ -67,7 +67,9 @@ infinite_loop
 	BL rotate_mod_leds
 	
 	MOV32 GPIO, #0x400073FC ;3rd arg 
+	PUSH {R0-R3}
 	BL write_leds
+	POP {R0-R3}
 	
 	CPSIE I 
 	B		infinite_loop

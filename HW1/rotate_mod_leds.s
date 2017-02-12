@@ -1,6 +1,6 @@
 ; Filename:     leds_rotate.s
 ; Author:       Shyamal Anadkat
-; Description:  
+; Description:  Rotates leds by 1 index
 
 	export rotate_mod_leds
 ;******************************************************************************** 
@@ -47,15 +47,15 @@ PREV			RN R10
 ;
 ;******************************************************************************** 
 rotate_mod_leds PROC
-	PUSH {R2-R11} ; save reg
+	PUSH {R4-R12} ; save reg
 	
-	SUB R2, ARRAY_SIZE, #1 ;arraysize -1 
+	SUB R12, ARRAY_SIZE, #1 ;arraysize -1 
 	MOV RED	, #0x00000800  ;change in red
 	MOV BLUE, #0x00000008  ;change in blue
 	MOV R9, #4
 	
 	;led_array[0] <- led_arrat[size-1] - 0x08 on red, + 0x08 on blue
-	MUL R11, R9, R2
+	MUL R11, R9, R12
 	LDR UPDATE_COLOR, [LED_ARRAY_ADDR, R11] ; R3 = ledarray[size-1] 
 	SUB UPDATE_COLOR, UPDATE_COLOR, RED     ; -0x08 on red 
 	ADD UPDATE_COLOR, UPDATE_COLOR, BLUE    ; +0x08 on blue 
@@ -64,11 +64,12 @@ rotate_mod_leds PROC
 	
 	MOV PREV_INDEX , #0       ; counter 
 	MOV POST_INDEX, #0
+	
 LOOP_BEGIN
     ; till array_size -1
 	ADD PREV_INDEX , PREV_INDEX , #4   ; increment counter
-	MUL R8, ARRAY_SIZE, R9
-	CMP PREV_INDEX , R8
+	MUL R11, ARRAY_SIZE, R9
+	CMP PREV_INDEX , R11
 	BEQ LOOP_END
 	
 	; led[POST_INDEX] = led[PREV_INDEX] - 0x08 on red, + 0x08 on blue 
@@ -79,10 +80,10 @@ LOOP_BEGIN
 	STR UPDATE_COLOR, [LED_ARRAY_ADDR, PREV_INDEX ] ; write to led_addr
 	
 	ADD POST_INDEX, POST_INDEX, #4   ; increment cntr
-	B LOOP_BEGIN
+	B LOOP_BEGIN					 ; branch to begin 
 LOOP_END
 
-	POP {R2-R11} ; restore regs
+	POP {R4-R12} ; restore regs
 	BX LR ;return from function
 	ENDP
     align

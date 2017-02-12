@@ -1,6 +1,6 @@
 ; Filename:     leds_init.s
 ; Author:       Shyamal Anadkat
-; Description: 
+; Description:  Initilaizes LED color codes
 
 	export init_leds
 ;******************************************************************************** 
@@ -33,14 +33,14 @@ UPDATE_LED_ADDR	RN R1	; passed in as argument
 ;
 ;******************************************************************************** 
 init_leds PROC
-	PUSH {R2-R9}  ; save regs used 
+	PUSH {R4-R10}  ; save regs used 
 	
 	;init LED color codes 
 	;25- 3F, 50- 7F, 75 - BF
-	MOV32 R2, #0x00007F00
-	STR R2, [LED_ARRAY_ADDR, #0]
-	MOV32 R3, #0x003F7F00
-	STR R3, [LED_ARRAY_ADDR, #4]
+	MOV32 R10, #0x00007F00
+	STR R10, [LED_ARRAY_ADDR, #0]
+	MOV32 R11, #0x003F7F00
+	STR R11, [LED_ARRAY_ADDR, #4]
 	MOV32 R4, #0x007F7F00
 	STR R4, [LED_ARRAY_ADDR, #8]
 	MOV32 R5, #0x007F3F00
@@ -58,7 +58,7 @@ init_leds PROC
 	MOV32 R9, #0x00000000
 	STR R9, [UPDATE_LED_ADDR]
 	
-	POP {R2-R9} ; restore regs used
+	POP {R4-R10} ; restore regs used
 	BX LR ; return from the function
 	ENDP
 		

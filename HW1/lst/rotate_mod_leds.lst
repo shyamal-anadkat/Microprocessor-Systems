@@ -6,7 +6,7 @@ ARM Macro Assembler    Page 1
 
     1 00000000         ; Filename:     leds_rotate.s
     2 00000000         ; Author:       Shyamal Anadkat
-    3 00000000         ; Description:  
+    3 00000000         ; Description:  Rotates leds by 1 index
     4 00000000         
     5 00000000                 export           rotate_mod_leds
     6 00000000         ;*******************************************************
@@ -87,9 +87,9 @@ ARM Macro Assembler    Page 2
                        ************************* 
    49 00000000         rotate_mod_leds
                                PROC
-   50 00000000 E92D 0FFC       PUSH             {R2-R11}    ; save reg
+   50 00000000 E92D 1FF0       PUSH             {R4-R12}    ; save reg
    51 00000004         
-   52 00000004 F1A1 0201       SUB              R2, ARRAY_SIZE, #1 
+   52 00000004 F1A1 0C01       SUB              R12, ARRAY_SIZE, #1 
                                                             ;arraysize -1 
    53 00000008 F44F 6400       MOV              RED , #0x00000800 
                                                             ;change in red
@@ -99,7 +99,7 @@ ARM Macro Assembler    Page 2
    56 00000014         
    57 00000014         ;led_array[0] <- led_arrat[size-1] - 0x08 on red, + 0x08
                         on blue
-   58 00000014 FB09 FB02       MUL              R11, R9, R2
+   58 00000014 FB09 FB0C       MUL              R11, R9, R12
    59 00000018 F850 300B       LDR              UPDATE_COLOR, [LED_ARRAY_ADDR, 
 R11] 
                                                             ; R3 = ledarray[siz
@@ -120,52 +120,53 @@ E
    64 00000028         
    65 00000028 F04F 0600       MOV              PREV_INDEX , #0 ; counter 
    66 0000002C F04F 0700       MOV              POST_INDEX, #0
-   67 00000030         LOOP_BEGIN
-   68 00000030         ; till array_size -1
-   69 00000030 F106 0604       ADD              PREV_INDEX , PREV_INDEX , #4 
+   67 00000030         
+   68 00000030         LOOP_BEGIN
+   69 00000030         ; till array_size -1
+   70 00000030 F106 0604       ADD              PREV_INDEX , PREV_INDEX , #4 
                                                             ; increment counter
                                                             
-   70 00000034 FB01 F809       MUL              R8, ARRAY_SIZE, R9
-   71 00000038 4546            CMP              PREV_INDEX , R8
-   72 0000003A D009            BEQ              LOOP_END
+   71 00000034 FB01 FB09       MUL              R11, ARRAY_SIZE, R9
+   72 00000038 455E            CMP              PREV_INDEX , R11
 
 
 
 ARM Macro Assembler    Page 3 
 
 
-   73 0000003C         
-   74 0000003C         ; led[POST_INDEX] = led[PREV_INDEX] - 0x08 on red, + 0x0
+   73 0000003A D009            BEQ              LOOP_END
+   74 0000003C         
+   75 0000003C         ; led[POST_INDEX] = led[PREV_INDEX] - 0x08 on red, + 0x0
                        8 on blue 
-   75 0000003C 4653            MOV              UPDATE_COLOR, PREV
-   76 0000003E EBA3 0304       SUB              UPDATE_COLOR, UPDATE_COLOR, RED
+   76 0000003C 4653            MOV              UPDATE_COLOR, PREV
+   77 0000003E EBA3 0304       SUB              UPDATE_COLOR, UPDATE_COLOR, RED
  
                                                             ; -0x08 on red 
-   77 00000042 442B            ADD              UPDATE_COLOR, UPDATE_COLOR, BLU
+   78 00000042 442B            ADD              UPDATE_COLOR, UPDATE_COLOR, BLU
 E 
                                                             ; +0x08 on blue 
-   78 00000044 F850 A006       LDR              PREV, [LED_ARRAY_ADDR, PREV_IND
+   79 00000044 F850 A006       LDR              PREV, [LED_ARRAY_ADDR, PREV_IND
 EX ] 
                                                             ; persist previous 
                                                             led data
-   79 00000048 5183            STR              UPDATE_COLOR, [LED_ARRAY_ADDR, 
+   80 00000048 5183            STR              UPDATE_COLOR, [LED_ARRAY_ADDR, 
 PREV_INDEX ] 
                                                             ; write to led_addr
                                                             
-   80 0000004A         
-   81 0000004A F107 0704       ADD              POST_INDEX, POST_INDEX, #4 
+   81 0000004A         
+   82 0000004A F107 0704       ADD              POST_INDEX, POST_INDEX, #4 
                                                             ; increment cntr
-   82 0000004E E7EF            B                LOOP_BEGIN
-   83 00000050         LOOP_END
-   84 00000050         
-   85 00000050 E8BD 0FFC       POP              {R2-R11}    ; restore regs
-   86 00000054 4770            BX               LR          ;return from functi
+   83 0000004E E7EF            B                LOOP_BEGIN  ; branch to begin 
+   84 00000050         LOOP_END
+   85 00000050         
+   86 00000050 E8BD 1FF0       POP              {R4-R12}    ; restore regs
+   87 00000054 4770            BX               LR          ;return from functi
                                                             on
-   87 00000056                 ENDP
-   88 00000056 00 00           align
-   89 00000058         
+   88 00000056                 ENDP
+   89 00000056 00 00           align
    90 00000058         
-   91 00000058                 END
+   91 00000058         
+   92 00000058                 END
 Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4.fp --apcs=int
 erwork --depend=.\obj\rotate_mod_leds.d -o.\obj\rotate_mod_leds.o -IC:\ECE353\H
 W1\RTE\_HW1 -IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.1\CMSIS\Include -IC:\Keil_v5\AR
@@ -206,17 +207,17 @@ LOOP_BEGIN 00000030
 
 Symbol: LOOP_BEGIN
    Definitions
-      At line 67 in file rotate_mod_leds.s
+      At line 68 in file rotate_mod_leds.s
    Uses
-      At line 82 in file rotate_mod_leds.s
+      At line 83 in file rotate_mod_leds.s
 Comment: LOOP_BEGIN used once
 LOOP_END 00000050
 
 Symbol: LOOP_END
    Definitions
-      At line 83 in file rotate_mod_leds.s
+      At line 84 in file rotate_mod_leds.s
    Uses
-      At line 72 in file rotate_mod_leds.s
+      At line 73 in file rotate_mod_leds.s
 Comment: LOOP_END used once
 rotate_mod_leds 00000000
 

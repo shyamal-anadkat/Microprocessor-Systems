@@ -6,7 +6,7 @@ ARM Macro Assembler    Page 1
 
     1 00000000         ; Filename:     leds_write.s
     2 00000000         ; Author:       Shyamal Anadkat
-    3 00000000         ; Description:  
+    3 00000000         ; Description:  writing to leds
     4 00000000         
     5 00000000                 export           write_leds
     6 00000000         ;*******************************************************
@@ -91,7 +91,7 @@ ARM Macro Assembler    Page 2
    39 00000000         ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                        ;;;
    40 00000000         
-   41 00000000 E92D 01FF       PUSH             {R0-R8}     ; Store off registe
+   41 00000000 E92D 01F0       PUSH             {R4-R8}     ; Store off registe
                                                             rs modified to mLak
                                                             e EABI compliant
    42 00000004         
@@ -248,7 +248,7 @@ ARM Macro Assembler    Page 4
   121 00000098 E7C1            B                bit_loop
   122 0000009A         
   123 0000009A         done_write
-  124 0000009A E8BD 01FF       POP              {R0-R8}     ;Restore registers 
+  124 0000009A E8BD 01F0       POP              {R4-R8}     ;Restore registers 
                                                             prior to return
   125 0000009E 4770            BX               LR          ; return from the f
                                                             unction
