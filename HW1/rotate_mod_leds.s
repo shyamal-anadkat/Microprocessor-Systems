@@ -47,19 +47,24 @@ PREV			RN R10
 ;
 ;******************************************************************************** 
 rotate_mod_leds PROC
-	PUSH {R4-R12} ; save reg
+	PUSH {R4-R12} 			; save regs (EABI)
 	
 	SUB R12, ARRAY_SIZE, #1 ;arraysize -1 
-	MOV RED	, #0x00000800  ;change in red
-	MOV BLUE, #0x00000008  ;change in blue
+	MOV RED	, #0x00000800   ;change in red
+	MOV BLUE, #0x00000008   ;change in blue
 	MOV R9, #4
 	
 	;led_array[0] <- led_arrat[size-1] - 0x08 on red, + 0x08 on blue
 	MUL R11, R9, R12
 	LDR UPDATE_COLOR, [LED_ARRAY_ADDR, R11] ; R3 = ledarray[size-1] 
-	SUB UPDATE_COLOR, UPDATE_COLOR, RED     ; -0x08 on red 
-	ADD UPDATE_COLOR, UPDATE_COLOR, BLUE    ; +0x08 on blue 
-	LDR PREV, [LED_ARRAY_ADDR, #0]          ; store previous led data
+	AND R12, UPDATE_COLOR, #0x00FF0000	    ; preserve green bits
+	ADD UPDATE_COLOR, UPDATE_COLOR, RED     ; +0x08 on red 
+	SUB UPDATE_COLOR, UPDATE_COLOR, BLUE    ; -0x08 on blue 
+	LDR PREV, [LED_ARRAY_ADDR, #0]          ; store previous led data 
+	MOVT R11, #0x0000
+	MOV R11, #0xFFFF
+	AND UPDATE_COLOR, UPDATE_COLOR, R11     ; clear first 16 bits
+	ADD UPDATE_COLOR, UPDATE_COLOR, R12     ; preserve green intensity 
 	STR UPDATE_COLOR, [LED_ARRAY_ADDR, #0]  ; write to led_addr
 	
 	MOV PREV_INDEX , #0       ; counter 
@@ -68,23 +73,29 @@ rotate_mod_leds PROC
 LOOP_BEGIN
     ; till array_size -1
 	ADD PREV_INDEX , PREV_INDEX , #4   ; increment counter
-	MUL R11, ARRAY_SIZE, R9
-	CMP PREV_INDEX , R11
-	BEQ LOOP_END
+	MUL R11, ARRAY_SIZE, R9			   ; compare prev index (4*size)
+	CMP PREV_INDEX , R11				
+	BEQ LOOP_END					   ; if reached arraysize-1 end the loop
 	
-	; led[POST_INDEX] = led[PREV_INDEX] - 0x08 on red, + 0x08 on blue 
+	; led[POST_INDEX] = led[PREV_INDEX] + 0x08 on red, - 0x08 on blue 
 	MOV UPDATE_COLOR, PREV
-	SUB UPDATE_COLOR, UPDATE_COLOR, RED     ; -0x08 on red 
-	ADD UPDATE_COLOR, UPDATE_COLOR, BLUE    ; +0x08 on blue 
-	LDR PREV, [LED_ARRAY_ADDR, PREV_INDEX ] ; persist previous led data
+	AND R12, UPDATE_COLOR, #0x00FF0000				; preserve green bits 
+	ADD UPDATE_COLOR, UPDATE_COLOR, RED     		; +0x08 on red 
+	SUB UPDATE_COLOR, UPDATE_COLOR, BLUE    		; -0x08 on blue 
+	LDR PREV, [LED_ARRAY_ADDR, PREV_INDEX ] 		; persist previous led data
+	MOVT R11, #0x0000
+	MOV R11, #0xFFFF
+	AND UPDATE_COLOR, UPDATE_COLOR, R11     ; clear first 16 bits
+	ADD UPDATE_COLOR, UPDATE_COLOR, R12     ; preserve green intensity 
 	STR UPDATE_COLOR, [LED_ARRAY_ADDR, PREV_INDEX ] ; write to led_addr
 	
 	ADD POST_INDEX, POST_INDEX, #4   ; increment cntr
 	B LOOP_BEGIN					 ; branch to begin 
-LOOP_END
+	
+LOOP_END							 ; end of loop 
 
-	POP {R4-R12} ; restore regs
-	BX LR ;return from function
+	POP {R4-R12} 	; restore regs modified 
+	BX LR 			;return from function
 	ENDP
     align
         

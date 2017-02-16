@@ -1,6 +1,6 @@
 ; Filename:     ece353_hw1
 ; Author:       Shyamal Anadkat 
-; Description:  
+; Description:  hw1.s
 
     export hw1
 	export WS2812B_LEDS
@@ -29,6 +29,7 @@ UPDATE_LEDS		SPACE	4
 LEDS      RN R0	
 UPDATE    RN R1	 
 GPIO 	  RN R2
+ZERO 	  RN R4
   
 ;******************************************************************************** 
 ; function hw1
@@ -41,43 +42,47 @@ GPIO 	  RN R2
 hw1   PROC
 	
 	;Setup argument to pass to init_leds
-	LDR  LEDS, =(WS2812B_LEDS)
-	LDR  UPDATE, =(UPDATE_LEDS)
+	LDR  LEDS,   =(WS2812B_LEDS)		;load address of LEDS into R0 
+	LDR  UPDATE, =(UPDATE_LEDS)		    ;load address of UPDATE_LEDS into R1
 	
 	;call init_leds routine	
-    BL init_leds
-	MOV R1, #8 
-
+	PUSH {LEDS,UPDATE}					;EABI caller save
+    BL init_leds					    ;call init_leds with params R0, R1	
+	POP {LEDS, UPDATE}					;EABI caller restore
+	
 infinite_loop
 
-	;check if update_leds is non-zero to continue 
-    LDR  UPDATE, =(UPDATE_LEDS)
-	MOV R3, #0
-	CMP R3, UPDATE
-	BEQ infinite_loop
+	;Check if update_leds is non-zero to continue 
+	LDR  UPDATE, =(UPDATE_LEDS)			;init UPDATE_LEDS
+	LDR  R5, [UPDATE] 				    ;get value of UPDATE_LEDS into R5
+	MOV ZERO, #0           				;move 0 to R4 to compare
+	CMP ZERO, R5						;check if UPDATE_LEDS value is zero 
+	BEQ infinite_loop				    ;if so, branch to start of infinite loop 
 	
 	CPSID I 
 	
-	;set update-leds to 0 
-	MOV32 R9, #0x00000000
-	STR R9, [UPDATE]
+	;Set update-leds to 0 
+	STR ZERO, [UPDATE]
 	
-	;call rotate_mod_leds
-	MOV R1, #8 
-	BL rotate_mod_leds
+	;Call rotate_mod_leds
+	LDR  LEDS, =(WS2812B_LEDS)	        ;init first arg
+	MOV UPDATE, #8					    ;pass in second parameter 
+	PUSH {R0,R1}						;EABI store reg
+	BL rotate_mod_leds					;call rotate_mod_leds
+	POP {R0,R1}							;EABI restore reg
 	
-	MOV32 GPIO, #0x400073FC ;3rd arg 
-	PUSH {R0-R3}
-	BL write_leds
-	POP {R0-R3}
+	;Call write_leds 
+	LDR  LEDS, =(WS2812B_LEDS)          ;init 1st arg
+	MOV UPDATE, #8	                        ;init 2nd argument
+	MOV32 GPIO, #0x400073FC 			;pass in 3rd arg 
+	PUSH {R0-R3}						;EABI save reg
+	BL write_leds						;call writ_leds
+	POP {R0-R3}						    ;EABI restore reg
 	
 	CPSIE I 
 	B		infinite_loop
-	
+	BX LR  ;return
     ENDP
     align
         
-
     END
-        
-        

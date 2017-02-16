@@ -185,8 +185,8 @@ ARM Macro Assembler    Page 3
                                                             -bits of LED data, 
                                                             move on to next 24-
                                                             bits of LED data
-   81 00000050         ; NOPs to flush out needed delay for total of 22 clocks 
-                       with logic low on pin
+   81 00000050         ; 9 NOPs to flush out needed delay for total of 22 clock
+                       s with logic low on pin
    82 00000050 BF00            NOP
    83 00000052 BF00            NOP
    84 00000054 BF00            NOP
@@ -213,8 +213,8 @@ ARM Macro Assembler    Page 4
    95 00000068         high_delay0
    96 00000068 1E7F            SUBS             DELAY_INDX, DELAY_INDX, #1
    97 0000006A D1FD            BNE              high_delay0
-   98 0000006C         ; NOPs to flush out needed delay for total of 20 clocks 
-                       with logic high on pin
+   98 0000006C         ; 4 NOPs to flush out needed delay for total of 20 clock
+                       s with logic high on pin
    99 0000006C BF00            NOP
   100 0000006E BF00            NOP
   101 00000070 BF00            NOP
@@ -234,8 +234,8 @@ ARM Macro Assembler    Page 4
                                                             -bits of LED data, 
                                                             move on to next 24-
                                                             bits of LED data
-  111 00000086         ; NOPs to flush out needed delay for total of 42 clocks 
-                       with logic low on pin
+  111 00000086         ;9 NOPs to flush out needed delay for total of 42 clocks
+                        with logic low on pin
   112 00000086 BF00            NOP
   113 00000088 BF00            NOP
   114 0000008A BF00            NOP

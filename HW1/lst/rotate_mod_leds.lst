@@ -87,7 +87,7 @@ ARM Macro Assembler    Page 2
                        ************************* 
    49 00000000         rotate_mod_leds
                                PROC
-   50 00000000 E92D 1FF0       PUSH             {R4-R12}    ; save reg
+   50 00000000 E92D 1FF0       PUSH             {R4-R12}    ; save regs (EABI)
    51 00000004         
    52 00000004 F1A1 0C01       SUB              R12, ARRAY_SIZE, #1 
                                                             ;arraysize -1 
@@ -104,69 +104,105 @@ ARM Macro Assembler    Page 2
 R11] 
                                                             ; R3 = ledarray[siz
                                                             e-1] 
-   60 0000001C EBA3 0304       SUB              UPDATE_COLOR, UPDATE_COLOR, RED
+   60 0000001C F403 0C7F       AND              R12, UPDATE_COLOR, #0x00FF0000 
+                                                            ; preserve green bi
+                                                            ts
+   61 00000020 4423            ADD              UPDATE_COLOR, UPDATE_COLOR, RED
  
-                                                            ; -0x08 on red 
-   61 00000020 442B            ADD              UPDATE_COLOR, UPDATE_COLOR, BLU
+                                                            ; +0x08 on red 
+   62 00000022 EBA3 0305       SUB              UPDATE_COLOR, UPDATE_COLOR, BLU
 E 
-                                                            ; +0x08 on blue 
-   62 00000022 F8D0 A000       LDR              PREV, [LED_ARRAY_ADDR, #0] ; st
+                                                            ; -0x08 on blue 
+   63 00000026 F8D0 A000       LDR              PREV, [LED_ARRAY_ADDR, #0] ; st
                                                             ore previous led da
-                                                            ta
-   63 00000026 6003            STR              UPDATE_COLOR, [LED_ARRAY_ADDR, 
+                                                            ta 
+   64 0000002A F2C0 0B00       MOVT             R11, #0x0000
+   65 0000002E F64F 7BFF       MOV              R11, #0xFFFF
+   66 00000032 EA03 030B       AND              UPDATE_COLOR, UPDATE_COLOR, R11
+ 
+                                                            ; clear first 16 bi
+                                                            ts
+   67 00000036 4463            ADD              UPDATE_COLOR, UPDATE_COLOR, R12
+ 
+                                                            ; preserve green in
+                                                            tensity 
+   68 00000038 6003            STR              UPDATE_COLOR, [LED_ARRAY_ADDR, 
 #0] 
-                                                            ; write to led_addr
-                                                            
-   64 00000028         
-   65 00000028 F04F 0600       MOV              PREV_INDEX , #0 ; counter 
-   66 0000002C F04F 0700       MOV              POST_INDEX, #0
-   67 00000030         
-   68 00000030         LOOP_BEGIN
-   69 00000030         ; till array_size -1
-   70 00000030 F106 0604       ADD              PREV_INDEX , PREV_INDEX , #4 
-                                                            ; increment counter
-                                                            
-   71 00000034 FB01 FB09       MUL              R11, ARRAY_SIZE, R9
-   72 00000038 455E            CMP              PREV_INDEX , R11
 
 
 
 ARM Macro Assembler    Page 3 
 
 
-   73 0000003A D009            BEQ              LOOP_END
-   74 0000003C         
-   75 0000003C         ; led[POST_INDEX] = led[PREV_INDEX] - 0x08 on red, + 0x0
+                                                            ; write to led_addr
+                                                            
+   69 0000003A         
+   70 0000003A F04F 0600       MOV              PREV_INDEX , #0 ; counter 
+   71 0000003E F04F 0700       MOV              POST_INDEX, #0
+   72 00000042         
+   73 00000042         LOOP_BEGIN
+   74 00000042         ; till array_size -1
+   75 00000042 F106 0604       ADD              PREV_INDEX , PREV_INDEX , #4 
+                                                            ; increment counter
+                                                            
+   76 00000046 FB01 FB09       MUL              R11, ARRAY_SIZE, R9 ; compare p
+                                                            rev index (4*size)
+   77 0000004A 455E            CMP              PREV_INDEX , R11
+   78 0000004C D012            BEQ              LOOP_END    ; if reached arrays
+                                                            ize-1 end the loop
+   79 0000004E         
+   80 0000004E         ; led[POST_INDEX] = led[PREV_INDEX] + 0x08 on red, - 0x0
                        8 on blue 
-   76 0000003C 4653            MOV              UPDATE_COLOR, PREV
-   77 0000003E EBA3 0304       SUB              UPDATE_COLOR, UPDATE_COLOR, RED
+   81 0000004E 4653            MOV              UPDATE_COLOR, PREV
+   82 00000050 F403 0C7F       AND              R12, UPDATE_COLOR, #0x00FF0000 
+                                                            ; preserve green bi
+                                                            ts 
+   83 00000054 4423            ADD              UPDATE_COLOR, UPDATE_COLOR, RED
  
-                                                            ; -0x08 on red 
-   78 00000042 442B            ADD              UPDATE_COLOR, UPDATE_COLOR, BLU
+                                                            ; +0x08 on red 
+   84 00000056 EBA3 0305       SUB              UPDATE_COLOR, UPDATE_COLOR, BLU
 E 
-                                                            ; +0x08 on blue 
-   79 00000044 F850 A006       LDR              PREV, [LED_ARRAY_ADDR, PREV_IND
+                                                            ; -0x08 on blue 
+   85 0000005A F850 A006       LDR              PREV, [LED_ARRAY_ADDR, PREV_IND
 EX ] 
                                                             ; persist previous 
                                                             led data
-   80 00000048 5183            STR              UPDATE_COLOR, [LED_ARRAY_ADDR, 
+   86 0000005E F2C0 0B00       MOVT             R11, #0x0000
+   87 00000062 F64F 7BFF       MOV              R11, #0xFFFF
+   88 00000066 EA03 030B       AND              UPDATE_COLOR, UPDATE_COLOR, R11
+ 
+                                                            ; clear first 16 bi
+                                                            ts
+   89 0000006A 4463            ADD              UPDATE_COLOR, UPDATE_COLOR, R12
+ 
+                                                            ; preserve green in
+                                                            tensity 
+   90 0000006C 5183            STR              UPDATE_COLOR, [LED_ARRAY_ADDR, 
 PREV_INDEX ] 
                                                             ; write to led_addr
                                                             
-   81 0000004A         
-   82 0000004A F107 0704       ADD              POST_INDEX, POST_INDEX, #4 
+   91 0000006E         
+   92 0000006E F107 0704       ADD              POST_INDEX, POST_INDEX, #4 
                                                             ; increment cntr
-   83 0000004E E7EF            B                LOOP_BEGIN  ; branch to begin 
-   84 00000050         LOOP_END
-   85 00000050         
-   86 00000050 E8BD 1FF0       POP              {R4-R12}    ; restore regs
-   87 00000054 4770            BX               LR          ;return from functi
+   93 00000072 E7E6            B                LOOP_BEGIN  ; branch to begin 
+   94 00000074         
+   95 00000074         LOOP_END                             ; end of loop 
+   96 00000074         
+   97 00000074 E8BD 1FF0       POP              {R4-R12}    ; restore regs modi
+                                                            fied 
+   98 00000078 4770            BX               LR          ;return from functi
                                                             on
-   88 00000056                 ENDP
-   89 00000056 00 00           align
-   90 00000058         
-   91 00000058         
-   92 00000058                 END
+   99 0000007A                 ENDP
+
+
+
+ARM Macro Assembler    Page 4 
+
+
+  100 0000007A 00 00           align
+  101 0000007C         
+  102 0000007C         
+  103 0000007C                 END
 Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4.fp --apcs=int
 erwork --depend=.\obj\rotate_mod_leds.d -o.\obj\rotate_mod_leds.o -IC:\ECE353\H
 W1\RTE\_HW1 -IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.1\CMSIS\Include -IC:\Keil_v5\AR
@@ -203,21 +239,21 @@ Symbol: FLASH
    Uses
       None
 Comment: FLASH unused
-LOOP_BEGIN 00000030
+LOOP_BEGIN 00000042
 
 Symbol: LOOP_BEGIN
    Definitions
-      At line 68 in file rotate_mod_leds.s
+      At line 73 in file rotate_mod_leds.s
    Uses
-      At line 83 in file rotate_mod_leds.s
+      At line 93 in file rotate_mod_leds.s
 Comment: LOOP_BEGIN used once
-LOOP_END 00000050
+LOOP_END 00000074
 
 Symbol: LOOP_END
    Definitions
-      At line 84 in file rotate_mod_leds.s
+      At line 95 in file rotate_mod_leds.s
    Uses
-      At line 73 in file rotate_mod_leds.s
+      At line 78 in file rotate_mod_leds.s
 Comment: LOOP_END used once
 rotate_mod_leds 00000000
 

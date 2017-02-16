@@ -55,11 +55,11 @@ init_leds PROC
 	STR R9, [LED_ARRAY_ADDR, #28]
 
 	;clear the 32-bit value pointed to by update_led_addr
-	MOV32 R9, #0x00000000
+	MOV R9, #0
 	STR R9, [UPDATE_LED_ADDR]
 	
 	POP {R4-R10} ; restore regs used
-	BX LR ; return from the function
+	BX LR        ; return from the function
 	ENDP
 		
     END
