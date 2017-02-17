@@ -138,7 +138,7 @@ ARM Macro Assembler    Page 3
                                                             
    69 0000003A         
    70 0000003A F04F 0600       MOV              PREV_INDEX , #0 ; counter 
-   71 0000003E F04F 0700       MOV              POST_INDEX, #0
+   71 0000003E F04F 0700       MOV              POST_INDEX, #0 ; post-counter
    72 00000042         
    73 00000042         LOOP_BEGIN
    74 00000042         ; till array_size -1
@@ -167,7 +167,7 @@ E
 EX ] 
                                                             ; persist previous 
                                                             led data
-   86 0000005E F2C0 0B00       MOVT             R11, #0x0000
+   86 0000005E F2C0 0B00       MOVT             R11, #0x0000 ; set mask
    87 00000062 F64F 7BFF       MOV              R11, #0xFFFF
    88 00000066 EA03 030B       AND              UPDATE_COLOR, UPDATE_COLOR, R11
  
@@ -190,8 +190,8 @@ PREV_INDEX ]
    96 00000074         
    97 00000074 E8BD 1FF0       POP              {R4-R12}    ; restore regs modi
                                                             fied 
-   98 00000078 4770            BX               LR          ;return from functi
-                                                            on
+   98 00000078 4770            BX               LR          ; return from funct
+                                                            ion
    99 0000007A                 ENDP
 
 

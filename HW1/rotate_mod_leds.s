@@ -68,7 +68,7 @@ rotate_mod_leds PROC
 	STR UPDATE_COLOR, [LED_ARRAY_ADDR, #0]  ; write to led_addr
 	
 	MOV PREV_INDEX , #0       ; counter 
-	MOV POST_INDEX, #0
+	MOV POST_INDEX, #0		  ; post-counter
 	
 LOOP_BEGIN
     ; till array_size -1
@@ -83,10 +83,10 @@ LOOP_BEGIN
 	ADD UPDATE_COLOR, UPDATE_COLOR, RED     		; +0x08 on red 
 	SUB UPDATE_COLOR, UPDATE_COLOR, BLUE    		; -0x08 on blue 
 	LDR PREV, [LED_ARRAY_ADDR, PREV_INDEX ] 		; persist previous led data
-	MOVT R11, #0x0000
+	MOVT R11, #0x0000								; set mask
 	MOV R11, #0xFFFF
-	AND UPDATE_COLOR, UPDATE_COLOR, R11     ; clear first 16 bits
-	ADD UPDATE_COLOR, UPDATE_COLOR, R12     ; preserve green intensity 
+	AND UPDATE_COLOR, UPDATE_COLOR, R11     		; clear first 16 bits
+	ADD UPDATE_COLOR, UPDATE_COLOR, R12     		; preserve green intensity 
 	STR UPDATE_COLOR, [LED_ARRAY_ADDR, PREV_INDEX ] ; write to led_addr
 	
 	ADD POST_INDEX, POST_INDEX, #4   ; increment cntr
@@ -95,7 +95,7 @@ LOOP_BEGIN
 LOOP_END							 ; end of loop 
 
 	POP {R4-R12} 	; restore regs modified 
-	BX LR 			;return from function
+	BX LR 			; return from function
 	ENDP
     align
         

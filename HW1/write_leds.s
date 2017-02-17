@@ -27,7 +27,10 @@ BIT_INDX		RN R8	; used as bit index for 24-bit loop
 ;  
 ; Description: 
 ;		writes to leds and maintains neopixels
-; Parameters:	
+; Parameters: R0 - LED ARRAY ADDR
+;			  R1 - NUM_LEDS
+;			  R2 - GPIO_ADDRESS
+;
 ; Returns: 
 ;********************************************************************************        
 write_leds   PROC
@@ -38,7 +41,7 @@ write_leds   PROC
 	;; the LEDs are connected to                             ;;
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	
-	PUSH {R4-R8}  ; Store off registers modified to mLake EABI compliant
+	PUSH {R4-R8}  ; Store off registers modified to make EABI compliant
 
 	MOV		LOGIC_HIGH, #0x80		; used to write a 1 to port pin
 	MOV		LOGIC_LOW, #0x00		; used to write a 0 to port pin
@@ -78,11 +81,7 @@ low_delay1
 	NOP
 	SUBS	BIT_INDX, BIT_INDX, #1		; decrement bit index
 	BEQ		write_loop					; done with this 24-bits of LED data, move on to next 24-bits of LED data
-	; 9 NOPs to flush out needed delay for total of 22 clocks with logic low on pin
-	NOP
-	NOP
-	NOP
-	NOP
+	; 5 NOPs to flush out needed delay for total of 22 clocks with logic low on pin
 	NOP
 	NOP
 	NOP
@@ -108,8 +107,7 @@ low_delay0
 	NOP
 	SUBS	BIT_INDX, BIT_INDX, #1	; decrement bit index
 	BEQ		write_loop				; done with this 24-bits of LED data, move on to next 24-bits of LED data
-	;9 NOPs to flush out needed delay for total of 42 clocks with logic low on pin
-	NOP
+	;8 NOPs to flush out needed delay for total of 42 clocks with logic low on pin
 	NOP
 	NOP
 	NOP
@@ -122,7 +120,7 @@ low_delay0
 	
 done_write
 	POP {R4-R8}		;Restore registers prior to return
-	BX LR ; return from the function
+	BX LR 			; return from the function
     ENDP
     align        
     

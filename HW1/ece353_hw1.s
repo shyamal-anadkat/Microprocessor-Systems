@@ -34,8 +34,8 @@ ZERO 	  RN R4
 ;******************************************************************************** 
 ; function hw1
 ;  
-; Description: 
-;		main
+; Description: main execution
+;
 ; Parameters:		
 ; Returns: 
 ;******************************************************************************** 
@@ -59,6 +59,7 @@ infinite_loop
 	CMP ZERO, R5						;check if UPDATE_LEDS value is zero 
 	BEQ infinite_loop				    ;if so, branch to start of infinite loop 
 	
+	;Execute the assembly instruction “CPSID I” 
 	CPSID I 
 	
 	;Set update-leds to 0 
@@ -73,12 +74,13 @@ infinite_loop
 	
 	;Call write_leds 
 	LDR  LEDS, =(WS2812B_LEDS)          ;init 1st arg
-	MOV UPDATE, #8	                        ;init 2nd argument
+	MOV UPDATE, #8	                    ;init 2nd argument
 	MOV32 GPIO, #0x400073FC 			;pass in 3rd arg 
 	PUSH {R0-R3}						;EABI save reg
 	BL write_leds						;call writ_leds
 	POP {R0-R3}						    ;EABI restore reg
 	
+	;Execute the assembly instruction “CPSIE I”. 
 	CPSIE I 
 	B		infinite_loop
 	BX LR  ;return

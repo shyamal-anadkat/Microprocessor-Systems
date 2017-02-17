@@ -33,24 +33,40 @@ UPDATE_LED_ADDR	RN R1	; passed in as argument
 ;
 ;******************************************************************************** 
 init_leds PROC
-	PUSH {R4-R10}  ; save regs used 
+	PUSH {R4-R11}  ; save regs used 
 	
 	;init LED color codes 
 	;25- 3F, 50- 7F, 75 - BF
+	
+	; LED 1
 	MOV32 R10, #0x00007F00
 	STR R10, [LED_ARRAY_ADDR, #0]
+	
+	; LED 2
 	MOV32 R11, #0x003F7F00
 	STR R11, [LED_ARRAY_ADDR, #4]
+	
+	; LED 3
 	MOV32 R4, #0x007F7F00
 	STR R4, [LED_ARRAY_ADDR, #8]
+	
+	; LED 4
 	MOV32 R5, #0x007F3F00
 	STR R5, [LED_ARRAY_ADDR, #12]
+	
+	; LED 5
 	MOV32 R6, #0x007F0000
 	STR R6, [LED_ARRAY_ADDR, #16]
+	
+	; LED 6
 	MOV32 R7, #0x007F003F
 	STR R7, [LED_ARRAY_ADDR, #20]
+	
+	; LED 7
 	MOV32 R8, #0x007F007F
 	STR R8, [LED_ARRAY_ADDR, #24]
+	
+	; LED 8
 	MOV32 R9, #0x003F007F
 	STR R9, [LED_ARRAY_ADDR, #28]
 
@@ -58,7 +74,7 @@ init_leds PROC
 	MOV R9, #0
 	STR R9, [UPDATE_LED_ADDR]
 	
-	POP {R4-R10} ; restore regs used
+	POP {R4-R11} ; restore regs used
 	BX LR        ; return from the function
 	ENDP
 		
