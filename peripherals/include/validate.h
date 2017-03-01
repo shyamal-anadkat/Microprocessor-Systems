@@ -38,6 +38,7 @@ typedef enum {
   ICE_UART_IRQ_TX,
   ICE_SPI_LCD,
   ICE_SPI_NORDIC,
+  ICE_I2C_FT6206,
   ICE_I2C_EEPROM
 } ice_validate_t;
 

@@ -157,51 +157,62 @@ i2c_status_t eeprom_byte_read
 }
 
 //*****************************************************************************
-// Test the EEPROM
+// Initialize the I2C peripheral
 //*****************************************************************************
-void test_eeprom(void)
+bool eeprom_init(void)
 {
   
-  uint8_t write_data[EEPROM_TEST_NUM_BYTES];
-  uint8_t read_data[EEPROM_TEST_NUM_BYTES];
-  bool passed = true;
-  int i;
-  
-		printf("==== Starting EEPROM Test ====\n\r");
-	
-  // Write data to the EEPROM
-  for(i = 0; i < EEPROM_TEST_NUM_BYTES; i++)
+  if(gpio_enable_port(EEPROM_GPIO_BASE) == false)
   {
-    write_data[i] = rand();
-    eeprom_byte_write(EEPROM_I2C_BASE,i,write_data[i]);
+    return false;
   }
+  
+  // Configure SCL 
+  if(gpio_config_digital_enable(EEPROM_GPIO_BASE, EEPROM_I2C_SCL_PIN)== false)
+  {
+    return false;
+  }
+    
+  if(gpio_config_alternate_function(EEPROM_GPIO_BASE, EEPROM_I2C_SCL_PIN)== false)
+  {
+    return false;
+  }
+    
+  if(gpio_config_port_control(EEPROM_GPIO_BASE, EEPROM_I2C_SCL_PCTL_M, EEPROM_I2C_SCL_PIN_PCTL)== false)
+  {
+    return false;
+  }
+    
 
-  // Read data back from the EEPROM
-  for(i = 0; i < EEPROM_TEST_NUM_BYTES; i++)
+  
+  // Configure SDA 
+  if(gpio_config_digital_enable(EEPROM_GPIO_BASE, EEPROM_I2C_SDA_PIN)== false)
   {
-    eeprom_byte_read(EEPROM_I2C_BASE,i,&(read_data[i]));
+    return false;
+  }
+    
+  if(gpio_config_open_drain(EEPROM_GPIO_BASE, EEPROM_I2C_SDA_PIN)== false)
+  {
+    return false;
+  }
+    
+  if(gpio_config_alternate_function(EEPROM_GPIO_BASE, EEPROM_I2C_SDA_PIN)== false)
+  {
+    return false;
+  }
+    
+  if(gpio_config_port_control(EEPROM_GPIO_BASE, EEPROM_I2C_SDA_PCTL_M, EEPROM_I2C_SDA_PIN_PCTL)== false)
+  {
+    return false;
+  }
+    
+  //  Initialize the I2C peripheral
+  if( initializeI2CMaster(EEPROM_I2C_BASE)!= I2C_OK)
+  {
+    return false;
   }
   
-  // Verify that the bytes written match the bytes read
-  for(i = 0; i < EEPROM_TEST_NUM_BYTES; i++)
-  {
-		printf("\tAddr 0x%04x.  write: 0x%02x read: 0x%02x\n\r", i, write_data[i], read_data[i]);
-    if( write_data[i] != read_data[i])
-    {
-      passed = false;
-    }
-  }
+  return true;
   
-  // Print if the test passed or failed.
-  if ( passed == true)
-  {
-      printf("\tEEPROM Test Passed\n\r");
-  }
-  else
-  {
-      printf("\tEEPROM Test Failed\n\r");
-  }
-  
-		printf("==== Stopping EEPROM Test ====\n\n\r");
 }
 

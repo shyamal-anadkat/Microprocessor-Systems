@@ -212,14 +212,14 @@ __INLINE static void UART_Tx_Flow(uint32_t uart_base, PC_Buffer *tx_buffer)
     bool tx_buffer_empty;
   
    // ADD CODE   
-   // Check to see if we have any data in the circular queue
+   // Check to see if we have any data in the circular buffer
     tx_buffer_empty = false; /*modify*/
   
-    if( tx_buffer_empty)
+    if( !tx_buffer_empty)
     {
         // Move data from the circular queue to the hardware FIFO
-        // until the hardware FIFO is full or the circular buffer
-        // is empty.
+        // until the hardware FIFO is full OR the circular buffer
+        // becomes empty.
     }
     else
     {

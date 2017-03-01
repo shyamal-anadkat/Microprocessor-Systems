@@ -29,8 +29,11 @@
 //    buffer  :   The address of the circular buffer.
 //    size:       Number of entries in the circular buffer.
 //*****************************************************************************
-void pc_buffer_init(PC_Buffer *buffer, uint16_t buffer_size)
-{
+void pc_buffer_init(PC_Buffer *buffer, uint16_t buffer_size){
+		buffer->array = (char *)malloc(buffer_size* sizeof(char));
+	  buffer->BUFFER_SIZE = buffer_size;
+	  buffer->consume_count = 0; 
+	  buffer->produce_count = 0;
 }
 
 //*****************************************************************************
@@ -42,6 +45,8 @@ void pc_buffer_init(PC_Buffer *buffer, uint16_t buffer_size)
 //*****************************************************************************
 void pc_buffer_add(PC_Buffer *buffer, char data)
 {
+	buffer->array[buffer->produce_count%buffer->BUFFER_SIZE] = data;
+	buffer->produce_count ++;
 }
 
 //*****************************************************************************
@@ -53,6 +58,8 @@ void pc_buffer_add(PC_Buffer *buffer, char data)
 //*****************************************************************************
 void pc_buffer_remove(PC_Buffer *buffer, char *data)
 {
+	*data = buffer->array[buffer->consume_count%buffer->BUFFER_SIZE];
+	 buffer->consume_count ++;
 }
 
 //*****************************************************************************
@@ -61,8 +68,9 @@ void pc_buffer_remove(PC_Buffer *buffer, char *data)
 // Parameters
 //    buffer  :   The address of the circular buffer.
 //*****************************************************************************
-bool pc_buffer_empty(PC_Buffer *buffer)
-{
+bool pc_buffer_empty(PC_Buffer *buffer){
+
+	return(buffer->consume_count == buffer->produce_count);
 }
 
 //*****************************************************************************
@@ -73,4 +81,5 @@ bool pc_buffer_empty(PC_Buffer *buffer)
 //*****************************************************************************
 bool pc_buffer_full(PC_Buffer *buffer)
 {
+	return (buffer->produce_count - buffer->consume_count == buffer->BUFFER_SIZE);
 }

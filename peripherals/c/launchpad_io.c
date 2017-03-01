@@ -31,7 +31,7 @@
 //        Search the datahseet for RCGCGPIO to determine
 //        the correct value to set each register to.
 //
-//        ../include/driver_defines.h contains many useful
+//        In ther drivers group, driver_defines.h contains many useful
 //        #defines that will make your code more readable and less mistake prone.
 //        Search for SYSCTL_RCGCGPIO in that file.
 //
@@ -44,7 +44,7 @@
 //      the correct value to set each register to.
 //
 //
-//        ../include/driver_defines.h contains many useful
+//        In ther drivers group, driver_defines.h contains many useful
 //        #defines that will make your code more readable and less mistake prone.
 //        Search for SYSCTL_PRGPIO in that file.
 //
@@ -65,6 +65,20 @@
 //*****************************************************************************
 static __inline void  port_f_enable_port(void)
 {
+		//turn on clock gating  
+	SYSCTL->RCGCGPIO |= SYSCTL_RCGCGPIO_R5; 
+	
+	//wait until port F is ready 
+	while( (SYSCTL->PRGPIO & SYSCTL_PRGPIO_R5) == 0) 
+	{}	
+		
+	//clear lock reg
+	//GPIOF->LOCK = 0x4C4F434B ;
+	GPIO_PORTF_LOCK_R = 0x4C4F434B ;
+	
+	//set the control reg
+	GPIO_PORTF_CR_R = 0xFF;
+  
 }
 
 
@@ -72,7 +86,7 @@ static __inline void  port_f_enable_port(void)
 // Setting a GPIOF pins as a digital enable requires writing to DEN register
 //
 // Paramters
-//    pin_mask  -   A bit mask indicating which pins should be configured as digital
+//    bit_mask  -   A bit mask indicating which pins should be configured as digital
 //              pins.  Modify only the bits where the bitmask is equal to 1.
 //
 // Use section 10.5 of the TM4C123 data sheet to determine the bits to set in 
@@ -81,8 +95,9 @@ static __inline void  port_f_enable_port(void)
 //  Code Example
 //  GPIOx->DEN = val;
 //*****************************************************************************
-static __inline void  port_f_digital_enable(uint8_t pin_mask)
+static __inline void  port_f_digital_enable(uint8_t bit_mask)
 {
+	GPIOF->DEN |= bit_mask; 
 
 }
 
@@ -91,7 +106,7 @@ static __inline void  port_f_digital_enable(uint8_t pin_mask)
 // Setting a GPIO pin as an output requires setting the DIR register
 //
 // Paramters
-//    pin_mask  -   A bit mask indicating which pins should be configured as output
+//    bit_mask  -   A bit mask indicating which pins should be configured as output
 //              pins.  Modify only the bits where the bitmask is equal to 1.
 //
 // Use section 10.5 of the TM4C123 data sheet to determine the bits to set in 
@@ -100,15 +115,16 @@ static __inline void  port_f_digital_enable(uint8_t pin_mask)
 //  Code Example
 //  GPIOx->DIR = val;
 //*****************************************************************************
-static __inline void  port_f_enable_output(uint8_t pin_mask)
+static __inline void  port_f_enable_output(uint8_t bit_mask)
 {
+		GPIOF->DIR |= bit_mask;
 }
 
 //*****************************************************************************
 // Setting a GPIO pin as an input requires setting the DIR register
 //
 // Paramters
-//    pin_mask  -   A bit mask indicating which pins should be configured as inputs
+//    bit_mask  -   A bit mask indicating which pins should be configured as inputs
 //              pins.  Modify only the bits where the bitmask is equal to 1.
 //
 // Use section 10.5 of the TM4C123 data sheet to determine the bits to set in 
@@ -117,16 +133,16 @@ static __inline void  port_f_enable_output(uint8_t pin_mask)
 //  Code Example
 //  GPIOx->DIR = val;
 //*****************************************************************************
-static __inline void  port_f_enable_input(uint8_t pin_mask)
+static __inline void  port_f_enable_input(uint8_t bit_mask)
 {
-
+	GPIOF->DIR &= ~bit_mask;
 }
 
 //*****************************************************************************
 // Enables a pullup resistors for GPIOF
 //
 // Paramters
-//    pin_mask  -   A bit mask indicating which pins should be configured
+//    bit_mask  -   A bit mask indicating which pins should be configured
 //                  with pullup resistors enabled
 //
 // Use section 10.5 of the TM4C123 data sheet to determine the bits to set in 
@@ -135,9 +151,9 @@ static __inline void  port_f_enable_input(uint8_t pin_mask)
 //  Code Example
 //  GPIOx->PUR = val;
 //*****************************************************************************
-static __inline void  port_f_enable_pull_up(uint8_t pin_mask)
+static __inline void  port_f_enable_pull_up(uint8_t bit_mask)
 {
-
+	GPIOF->PUR |= bit_mask;
 }
 
 //*****************************************************************************
@@ -150,7 +166,7 @@ static __inline void  port_f_enable_pull_up(uint8_t pin_mask)
 //*****************************************************************************
 void  lp_io_set_pin(uint8_t pin_number)
 {
-
+	GPIOF->DATA |= (1 << pin_number);
 }
 
 //*****************************************************************************
@@ -163,7 +179,7 @@ void  lp_io_set_pin(uint8_t pin_number)
 //*****************************************************************************
 void  lp_io_clear_pin(uint8_t pin_number)
 {
-
+	GPIOF->DATA &= ~(1 << pin_number);
 }
 
 //*****************************************************************************
@@ -178,6 +194,11 @@ void  lp_io_clear_pin(uint8_t pin_number)
 //*****************************************************************************
 bool  lp_io_read_pin(uint8_t pin_number)
 {
+  if((GPIOF->DATA & (1 << pin_number))) {
+		return true;
+	} else {
+		return false;
+	}
 }
 
 /*********************************************************************************
@@ -187,6 +208,13 @@ bool  lp_io_read_pin(uint8_t pin_number)
 ********************************************************************************/
 void lp_io_init(void)
 {
-
+	port_f_enable_port();
+	port_f_digital_enable(RED_M | BLUE_M | GREEN_M | SW1_M | SW2_M);
+	port_f_enable_output(RED_M | BLUE_M | GREEN_M);
+	port_f_enable_input(SW1_M | SW2_M);
+	port_f_enable_pull_up(SW1_M | SW2_M);
+	
+	
+	
 }
 

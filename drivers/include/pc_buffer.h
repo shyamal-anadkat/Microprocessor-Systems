@@ -28,6 +28,10 @@
 #include <stdlib.h>
 
 typedef __packed struct {
+	uint32_t produce_count;
+	uint32_t consume_count;
+	uint16_t BUFFER_SIZE;
+	char * array;
 } PC_Buffer ;
 
 //*****************************************************************************

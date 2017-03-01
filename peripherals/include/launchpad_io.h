@@ -31,18 +31,18 @@
 #include "driver_defines.h"
 
 // ADD CODE 01
-#define   RED_PIN       0
-#define   BLUE_PIN      0
-#define   GREEN_PIN     0
-#define   SW1_PIN       0
-#define   SW2_PIN       0
+#define   RED_BIT       1
+#define   BLUE_BIT      2
+#define   GREEN_BIT     3
+#define   SW1_BIT       4
+#define   SW2_BIT       0
 
-#define   RED_M     (1 << RED_PIN)        // RED LED is connected to PF.1   ( Port F, Pin 1)
-#define   BLUE_M    (1 << BLUE_PIN)       // BLUE LED is connected to PF.2  ( Port F, Pin 2)
-#define   GREEN_M   (1 << GREEN_PIN)      // GREEN LED is connected to PF.3 ( Port F, Pin 3)
+#define   RED_M     (1 << RED_BIT)
+#define   BLUE_M    (1 << BLUE_BIT)
+#define   GREEN_M   (1 << GREEN_BIT)
 
-#define   SW1_M     (1 << SW1_PIN)
-#define   SW2_M     (1 << SW2_PIN)
+#define   SW1_M     (1 << SW1_BIT)
+#define   SW2_M     (1 << SW2_BIT)
 
 
 /********************************************************************************

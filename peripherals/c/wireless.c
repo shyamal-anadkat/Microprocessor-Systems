@@ -1,5 +1,6 @@
 #include "wireless.h"
 
+const char *wireless_error_messages[] = {"NRF24L01_TX_SUCCESS","NRF24L01_TX_FIFO_FULL","NRF24L01_TX_PCK_LOST", "NRF24L01_RX_SUCCESS", "NRF24L01_RX_FIFO_EMPTY", "NRF24L01_ERR"};
 
 extern void spiTx(uint32_t base, uint8_t *tx_data, int size, uint8_t *rx_data);
 extern bool spiVerifyBaseAddr(uint32_t base);
@@ -603,7 +604,11 @@ bool wireless_configure_device(
 
     // Enable the Radio in RX mode
     wireless_reg_write(NRF24L01_CONFIG_R,NRF24L01_CONFIG_PWR_UP | NRF24L01_CONFIG_EN_CRC | NRF24L01_CONFIG_PRIM_RX_PRX );
-      
+
+    // Flush any outstanding info in the TX FIFO
+    wireless_flush_tx_fifo();
+    wireless_flush_rx_fifo();    
+
     wireless_CE_high();
     return true;
   }
@@ -655,7 +660,7 @@ void wireless_initialize(void)
   gpio_config_enable_output(RF_CE_GPIO_BASE,RF_CE_PIN);
 
   initialize_spi( RF_SPI_BASE, 0, 10);
-  RF_CE_PORT->DATA |= (1 << 1);
+  RF_CE_PORT->DATA |= RF_CE_PIN;
 }
 
 //*****************************************************************************
