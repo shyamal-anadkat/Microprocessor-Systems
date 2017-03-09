@@ -34,6 +34,13 @@
 *******************************************************************************/
 static void initialize_adc_gpio_pins(void)
 {
+	gpio_enable_port(PS2_GPIO_BASE);
+	
+	gpio_config_enable_input(PS2_GPIO_BASE, PS2_X_DIR_MASK |PS2_Y_DIR_MASK );
+	
+	gpio_config_analog_enable(PS2_GPIO_BASE, PS2_X_DIR_MASK | PS2_Y_DIR_MASK);
+	
+	gpio_config_alternate_function(PS2_GPIO_BASE, PS2_X_DIR_MASK | PS2_Y_DIR_MASK);
 }
 
 /*******************************************************************************
@@ -57,8 +64,9 @@ void ps2_initialize(void)
 uint16_t ps2_get_x(void)
 {
   uint16_t adc_val;
+	adc_val = get_adc_value(PS2_ADC_BASE ,PS2_X_ADC_CHANNEL);
   
-  return adc_val;
+  return adc_val & 0xFFF;
 }
 
 /*******************************************************************************
@@ -70,7 +78,8 @@ uint16_t ps2_get_x(void)
 uint16_t ps2_get_y(void)
 {
   uint16_t adc_val;
+	adc_val = get_adc_value(PS2_ADC_BASE ,PS2_Y_ADC_CHANNEL);
   
-  return adc_val;
+  return adc_val & 0xFFF;
 }
 

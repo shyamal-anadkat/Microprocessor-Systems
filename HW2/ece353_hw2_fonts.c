@@ -1,4 +1,11 @@
+/*Author : Shyamal Anadkat and ECE353 Staff */
+
 #include "ece353_hw2_fonts.h"
+
+#define MAX_PIXELS_X 239
+#define MAX_PIXELS_Y 319
+
+void lcd_print_char(int offset,uint16_t x_start, uint16_t y_start,uint16_t fg, uint16_t bg);
 
 /* 
 **  Font data for Sitka Small 12pt
@@ -1720,6 +1727,33 @@ const uint8_t sitkaSmall_12ptBitmaps[] =
 
 
 /**********************************************************
+* Function Name: lcd_print_char
+**********************************************************
+* Summary: prints a char on LCD screen. Helper function for 
+* lcd_print_stringXY. specified XY location in specified 
+* foreground and background colors
+* Returns:
+*  Nothing
+**********************************************************/
+void lcd_print_char(int offset,
+		uint16_t x_start, 
+		uint16_t y_start,
+		uint16_t fg, uint16_t bg) 
+{
+  //draw a single char; offset given is for the sitkaSmall Bitmap
+  lcd_draw_image(
+    x_start, // X Pos
+    FONT_WIDTH, // Image/font Horizontal Width
+    y_start, // Y Pos
+    FONT_HEIGHT, // Image/font Vertical Height
+    & (sitkaSmall_12ptBitmaps[offset]), // Image
+    fg, // Foreground Color
+    bg // Background Color
+  );
+}
+
+
+/**********************************************************
 * Function Name: lcd_print_stringXY
 **********************************************************
 * Summary: prints a string to the LCD screen at a specified
@@ -1731,7 +1765,7 @@ const uint8_t sitkaSmall_12ptBitmaps[] =
 * Y=19 being the bottom row of characters.  NOTE this is
 * opposite of how columns and rows are specified for the
 * IL9341.
-* Returns:
+* Returns:.
 *  Nothing
 **********************************************************/
 void lcd_print_stringXY(
@@ -1742,5 +1776,52 @@ void lcd_print_stringXY(
     uint16_t bg_color
 )
 {
+  //variable declarations
+  int xPixels, yPixels, offset;
+	
+  //get size of the message string (string.h)
+  size_t lenMsg = strlen(msg);
 
+  int currX = X; //preserve X value
+  int currY = Y; //preserve Y value 
+
+  int i;
+  //loop for each character(or image) in input string
+  for (i = 0; i < lenMsg; i++) {
+
+    //*****MULTI LINE STRING SUPPORT*****
+
+    //wraparound logic for X 
+    if (currX > 13) {
+      //handle space char case by incrementing to next char
+      if (msg[i] == 32) {
+        i++;
+      }
+      //remaining chars on next row 
+      currX = X;
+      currY += 1;
+    }
+		
+    //wrap around logic for Y		
+    if (currY > 19) {
+      currY = 0; //wrap to row 0 
+    }
+
+    //**********************************
+
+    //logic for grid (X,Y) to pixel XY translation
+		//16 pixels tall and 17 pixels wide 
+    xPixels = MAX_PIXELS_X - (((currX + 1) * 17) - 1);
+    yPixels = MAX_PIXELS_Y - (((currY + 1) * 16) - 1);
+
+    //ascii -> offset translation for sitkaBitmap lookup 
+    offset = ((int) msg[i] - 32) * 48; 
+
+    //get offset for the sitkaBitmap from char ascii 
+    //call helper function to print an image/char on screen
+    lcd_print_char(offset, xPixels, yPixels, fg_color, bg_color); //specified foreground and background color 
+
+    //move to the next char/image box 
+    currX++;
+  }
 }

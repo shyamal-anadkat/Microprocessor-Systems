@@ -369,9 +369,9 @@ void lcd_config_screen(void)
   lcd_write_data_u8(0x3a);
   lcd_write_data_u8(0x1f);
       
-   lcd_write_cmd_u8(LCD_CMD_SLEEP_OUT);    //Exit Sleep 
+  lcd_write_cmd_u8(LCD_CMD_SLEEP_OUT);    //Exit Sleep 
   delayms(120);
-   lcd_write_cmd_u8(LCD_CMD_DISPLAY_ON);    //Display on 
+  lcd_write_cmd_u8(LCD_CMD_DISPLAY_ON);    //Display on 
   delayms(50);
   LCD_RDX=0xFF;  
 
