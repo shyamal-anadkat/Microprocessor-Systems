@@ -1,0 +1,6 @@
+--create ..\ICE-20-I2C-EEPROM\lib\ece353_eeprom.lib
+..\ice-20-i2c-eeprom\lib\eeprom_init.o
+..\ice-20-i2c-eeprom\lib\gpio_port.o
+..\ice-20-i2c-eeprom\lib\pc_buffer.o
+..\ice-20-i2c-eeprom\lib\spi.o
+..\ice-20-i2c-eeprom\lib\uart.o

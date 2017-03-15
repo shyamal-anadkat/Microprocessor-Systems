@@ -1,0 +1,17 @@
+..\ice-20-i2c-eeprom\lib\eeprom_init.o: eeprom_init.c
+..\ice-20-i2c-eeprom\lib\eeprom_init.o: eeprom_init.h
+..\ice-20-i2c-eeprom\lib\eeprom_init.o: C:\Keil_v5.16a\ARM\ARMCC\Bin\..\include\stdint.h
+..\ice-20-i2c-eeprom\lib\eeprom_init.o: C:\Keil_v5.16a\ARM\ARMCC\Bin\..\include\stdbool.h
+..\ice-20-i2c-eeprom\lib\eeprom_init.o: C:\Keil_v5.16a\ARM\ARMCC\Bin\..\include\stdio.h
+..\ice-20-i2c-eeprom\lib\eeprom_init.o: C:\Keil_v5.16a\ARM\PACK\Keil\TM4C_DFP\1.0.0\Device\Include\TM4C123\TM4C123GH6PM.h
+..\ice-20-i2c-eeprom\lib\eeprom_init.o: C:\Keil_v5.16a\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include\core_cm4.h
+..\ice-20-i2c-eeprom\lib\eeprom_init.o: C:\Keil_v5.16a\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include\core_cmInstr.h
+..\ice-20-i2c-eeprom\lib\eeprom_init.o: C:\Keil_v5.16a\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include\core_cmFunc.h
+..\ice-20-i2c-eeprom\lib\eeprom_init.o: C:\Keil_v5.16a\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include\core_cmSimd.h
+..\ice-20-i2c-eeprom\lib\eeprom_init.o: C:\Keil_v5.16a\ARM\PACK\Keil\TM4C_DFP\1.0.0\Device\Include\TM4C123\system_TM4C123.h
+..\ice-20-i2c-eeprom\lib\eeprom_init.o: ..\include\gpio_port.h
+..\ice-20-i2c-eeprom\lib\eeprom_init.o: ..\include\driver_defines.h
+..\ice-20-i2c-eeprom\lib\eeprom_init.o: C:\Keil_v5.16a\ARM\ARMCC\Bin\..\include\errno.h
+..\ice-20-i2c-eeprom\lib\eeprom_init.o: ..\include\pc_buffer.h
+..\ice-20-i2c-eeprom\lib\eeprom_init.o: C:\Keil_v5.16a\ARM\ARMCC\Bin\..\include\stdlib.h
+..\ice-20-i2c-eeprom\lib\eeprom_init.o: ..\include\uart.h
