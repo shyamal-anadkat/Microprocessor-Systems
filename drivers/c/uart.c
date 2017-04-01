@@ -284,9 +284,48 @@ bool uart_init(uint32_t uart_base, bool enable_rx_irq, bool enable_tx_irq)
     pr_mask = uart_get_pr_mask(uart_base);
     
     // ADD CODE
-    
-    return true;
 
+		// Turn the clock on using the rcgc_mask
+	  SYSCTL->RCGCUART|= rcgc_mask; 
+
+    // Wait for the PRUART to indicate the port is ready
+		while( (SYSCTL->PRUART  & pr_mask) == 0) 
+		{}	
+			
+	  // Configure the Line Control for 8N1, FIFOs
+    uart->LCRH =   UART_LCRH_WLEN_8 | UART_LCRH_FEN;
+			
+		//Disable the UART (CTL)
+    uart->CTL &= ~UART_CTL_UARTEN;
+			
+		//set the baud rate to be 115200.
+		uart->IBRD = 27;
+		uart->FBRD = 8; 
+			
+		uart->LCRH &= UART_LCRH_FEN;
+		uart->LCRH |= UART_LCRH_WLEN_8;
+			
+		if (enable_rx_irq) {
+			uart->IM = UART_IM_RXIM | UART_IM_RTIM;
+		}
+		
+		if(enable_tx_irq) {
+		//do nothing till next ICE
+			uart->IM |= UART_IM_TXIM;
+		}
+		
+		if(enable_rx_irq || enable_tx_irq) {
+		
+		//set priority to 0 
+		NVIC_SetPriority(uart_get_irq_num(uart_base), 0);
+			
+		//enable the NVIC 
+		NVIC_EnableIRQ(uart_get_irq_num(uart_base));
+		
+		}
+		
+		uart->CTL = (UART_CTL_RXE|UART_CTL_TXE|UART_CTL_UARTEN);
+		
 }
 
 

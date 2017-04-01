@@ -325,7 +325,6 @@ __weak bool  gpio_config_analog_enable(uint32_t baseAddr, uint8_t pins)
 {
   GPIOA_Type  *gpioPort;
 
-  // ADD CODE
   // Verify that the base address is a valid GPIO base address
   // using the verify_base_addr function provided above
 	if(!verify_base_addr(baseAddr)) { return false; }
@@ -353,13 +352,14 @@ __weak bool  gpio_config_alternate_function(uint32_t baseAddr, uint8_t pins)
 //*****************************************************************************
 bool  gpio_config_port_control(uint32_t baseAddr, uint32_t mask, uint32_t pctl)
 {
-  //GPIOA_Type  *gpioPort;
+   GPIOA_Type  *gpioPort;
 
-  // ADD CODE
   // Verify that the base address is a valid GPIO base address
   // using the verify_base_addr function provided above
-	// if(!verify_base_addr(baseAddr)) { return false; }
-	// gpioPort = (GPIOA_Type *)baseAddr;
+  if(!verify_base_addr(baseAddr)) { return false; }
+	gpioPort = (GPIOA_Type *)baseAddr;
+	
+	gpioPort->PCTL = (mask & pctl);
   return true;
 }
 
@@ -368,9 +368,8 @@ bool  gpio_config_port_control(uint32_t baseAddr, uint32_t mask, uint32_t pctl)
  *****************************************************************************/
 bool  gpio_config_open_drain(uint32_t gpioBase, uint8_t pins)
 {
-  //GPIOA_Type  *gpioPort;
-
-  // ADD CODE
+  // GPIOA_Type  *gpioPort;
+	
   // Verify that the base address is a valid GPIO base address
   // using the verify_base_addr function provided above
 	// if(!verify_base_addr(gpioBase)) { return false; }
@@ -395,9 +394,8 @@ bool  gpio_config_open_drain(uint32_t gpioBase, uint8_t pins)
 //*****************************************************************************
 bool  gpio_config_falling_edge_irq(uint32_t gpioBase, uint8_t pins)
 {
-  //GPIOA_Type  *gpioPort;
+  // GPIOA_Type  *gpioPort;
 
-  // ADD CODE
   // Verify that the base address is a valid GPIO base address
   // using the verify_base_addr function provided above
 	// if(!verify_base_addr(gpioBase)) { return false; }
