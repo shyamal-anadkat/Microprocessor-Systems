@@ -85,14 +85,15 @@ bool initialize_spi( uint32_t base_addr, uint8_t spi_mode, uint32_t cpsr)
     
     // ************* ADD CODE *********************** //
     // Disable the SSI interface (Set entire register to 0).
-		mySSI->CR1 =0;
+		mySSI->CR1 &= ~SSI_CR1_SSE;
     
     // ************* ADD CODE *********************** //
     // Assume that we have a 50MHz clock
     // FSSIClk = FSysClk / (CPSDVSR * (1 + SCR))
     // Use the cpsr variable to set the CPSDVSR bits.  Set the SCR CR0 to 0.
-		mySSI->CPSR = 2;
-    mySSI->CR0  &=  ~SSI_CR0_SCR_M;
+		mySSI->CPSR &= ~SSI_CPSR_CPSDVSR_M;
+		mySSI->CPSR |= (SSI_CPSR_CPSDVSR_M & cpsr);
+    mySSI->CR0 = 0; 
 
     // ************* ADD CODE *********************** //
     // Configure SPI control for freescale format, data width of 8 bits
