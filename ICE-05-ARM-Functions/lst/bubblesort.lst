@@ -1,0 +1,210 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000                 export           bubble_sort
+    2 00000000                 export           swap_values
+    3 00000000         
+    4 00000000                 AREA             FLASH, CODE, READONLY
+    5 00000000                 ALIGN
+    6 00000000         
+    7 00000000         
+    8 00000000         ;*******************************************************
+                       ***********************
+    9 00000000         ; Description
+   10 00000000         ;     Given the address in R7, it will read the unsigned
+                        byte at R7 and R7 + 1.
+   11 00000000         ;     If [R7] > [R7 + 1], swap the values
+   12 00000000         ;
+   13 00000000         ;     Modify only registers R8 or greater.
+   14 00000000         ;
+   15 00000000         ; Parameters
+   16 00000000         ;   R7 - Array Address
+   17 00000000         ;
+   18 00000000         ; Returns
+   19 00000000         ;   Nothing
+   20 00000000         ;*******************************************************
+                       ***********************
+   21 00000000         swap_values
+                               PROC
+   22 00000000         ;---------------------------------------
+   23 00000000         ; START ADD CODE
+   24 00000000         ;---------------------------------------
+   25 00000000         ; load current and next byte
+   26 00000000 F897 8000       LDRB             R8, [R7, #0]
+   27 00000004 F897 9001       LDRB             R9, [R7, #1]
+   28 00000008         
+   29 00000008         ; Check to see if next value if less than curr value 
+   30 00000008 45C1            CMP              R9, R8
+   31 0000000A         
+   32 0000000A         ; if so, swap values 
+   33 0000000A BF3C F887 
+              8001             STRBLO           R8, [R7, #1]
+   34 00000010 F887 9000       STRBLO           R9, [R7, #0]
+   35 00000014         
+   36 00000014         
+   37 00000014 4770            BX               LR
+   38 00000016         
+   39 00000016         ;---------------------------------------
+   40 00000016         ; END ADD CODE
+   41 00000016         ;---------------------------------------
+   42 00000016                 ENDP
+   43 00000016         
+   44 00000016         
+   45 00000016         
+   46 00000016         ;*******************************************************
+                       ***********************
+   47 00000016         ; Description
+   48 00000016         ;   Uses Bubble Sort to sort an array of unsigned 8-bit 
+                       numbers.
+   49 00000016         ;
+   50 00000016         ;   Modify only registers R0-R7
+   51 00000016         ;
+   52 00000016         ; Parameters
+
+
+
+ARM Macro Assembler    Page 2 
+
+
+   53 00000016         ;   R0 - Array Address
+   54 00000016         ;   R1 - Array Size
+   55 00000016         ;
+   56 00000016         ; Returns
+   57 00000016         ;   Nothing
+   58 00000016         ;*******************************************************
+                       ***********************
+   59 00000016         bubble_sort
+                               PROC
+   60 00000016         
+   61 00000016         ; Save registers
+   62 00000016 E92D 5FFF       PUSH             {R0-R12, LR}
+   63 0000001A         
+   64 0000001A         ;---------------------------------------
+   65 0000001A         ; START ADD CODE
+   66 0000001A         ;---------------------------------------
+   67 0000001A         ;verify if array addr != 0 
+   68 0000001A 2800            CMP              R0, #0
+   69 0000001C         
+   70 0000001C F1A1 0101       SUB              R1, R1, #1
+   71 00000020         
+   72 00000020         while1_start
+   73 00000020         
+   74 00000020         ;if reached end of array 
+   75 00000020 2900            CMP              R1, #0
+   76 00000022 D00D            BEQ              while1_end
+   77 00000024         
+   78 00000024         while2_start
+   79 00000024 F04F 0400       MOV              R4, #0
+   80 00000028         
+   81 00000028 428C            CMP              R4, R1
+   82 0000002A D206            BHS              while2_end
+   83 0000002C         
+   84 0000002C EB00 0704       ADD              R7, R0, R4
+   85 00000030         
+   86 00000030 F7FF FFFE       BL               swap_values
+   87 00000034         
+   88 00000034 F104 0401       ADD              R4, R4, #1
+   89 00000038         
+   90 00000038 E7F4            B                while2_start
+   91 0000003A         while2_end
+   92 0000003A F1A1 0101       SUB              R1, R1, #1
+   93 0000003E E7EF            B                while1_start
+   94 00000040         while1_end
+   95 00000040         
+   96 00000040         
+   97 00000040         ; NOTE: The return from the function is already
+   98 00000040         ; provided below
+   99 00000040         
+  100 00000040         ;---------------------------------------
+  101 00000040         ; END ADD CODE
+  102 00000040         ;---------------------------------------
+  103 00000040         
+  104 00000040         
+  105 00000040         ; Restore Registers
+  106 00000040 E8BD 5FFF       POP              {R0-R12, LR}
+  107 00000044         
+  108 00000044         ; Return from the function
+  109 00000044 4770            BX               LR
+
+
+
+ARM Macro Assembler    Page 3 
+
+
+  110 00000046         
+  111 00000046                 ENDP
+  112 00000046         
+  113 00000046                 END
+Command Line: --debug --xref --cpu=Cortex-M4.fp --apcs=interwork --depend=.\obj
+\bubblesort.d -o.\obj\bubblesort.o -II:\ECE353\ICE-05-ARM-Functions\RTE -IC:\Ap
+pV\mdk_510\ARM\PACK\ARM\CMSIS\4.1.1\CMSIS\Include -IC:\AppV\mdk_510\ARM\PACK\Ke
+il\TM4C_DFP\1.0.0\Device\Include\TM4C123 --predefine="__EVAL SETA 1" --predefin
+e="__MICROLIB SETA 1" --list=.\lst\bubblesort.lst bubbleSort.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+FLASH 00000000
+
+Symbol: FLASH
+   Definitions
+      At line 4 in file bubbleSort.s
+   Uses
+      None
+Comment: FLASH unused
+bubble_sort 00000016
+
+Symbol: bubble_sort
+   Definitions
+      At line 59 in file bubbleSort.s
+   Uses
+      At line 1 in file bubbleSort.s
+Comment: bubble_sort used once
+swap_values 00000000
+
+Symbol: swap_values
+   Definitions
+      At line 21 in file bubbleSort.s
+   Uses
+      At line 2 in file bubbleSort.s
+      At line 86 in file bubbleSort.s
+
+while1_end 00000040
+
+Symbol: while1_end
+   Definitions
+      At line 94 in file bubbleSort.s
+   Uses
+      At line 76 in file bubbleSort.s
+Comment: while1_end used once
+while1_start 00000020
+
+Symbol: while1_start
+   Definitions
+      At line 72 in file bubbleSort.s
+   Uses
+      At line 93 in file bubbleSort.s
+Comment: while1_start used once
+while2_end 0000003A
+
+Symbol: while2_end
+   Definitions
+      At line 91 in file bubbleSort.s
+   Uses
+      At line 82 in file bubbleSort.s
+Comment: while2_end used once
+while2_start 00000024
+
+Symbol: while2_start
+   Definitions
+      At line 78 in file bubbleSort.s
+   Uses
+      At line 90 in file bubbleSort.s
+Comment: while2_start used once
+7 symbols
+340 symbols in table

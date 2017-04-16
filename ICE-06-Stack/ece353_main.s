@@ -1,5 +1,5 @@
 ; Filename:     main.s 
-; Author:       Shyamal Anadkat 
+; Author:       ece353 staff 
 ; Description:  
 
     export __main
@@ -94,45 +94,23 @@ __main   PROC
 
     ; Initialize MATRIX_A
     ; <ADD CODE  1 >
-	MOV R0, R4
-	MOV32 R2, #0x03020100
-	PUSH {R1, R4}
-	BL initVar
-	POP {R1, R4}
     
     ; Initialize MATRIX_B
     ; <ADD CODE  2 >
-	MOV R0, R5
-	MOV32 R2, #0x07060504
-	PUSH {R1, R5}
-	BL initVar
-	POP {R1, R5}
     
 
     ; Initialize MATRIX_C
     ; <ADD CODE  3 >
-	MOV R0, R6
-	MOV32 R2, #0x00000000
-	PUSH {R1, R6}
-	BL initVar
-	POP {R1, R6}
     
     
     ; Call matrixMultiply.  Pass the three paramters to using
     ; the stack
     ; <ADD CODE  4 >
-	PUSH {R6,R4,R5}
     
-	BL matrixMultiply
     ; Verify that MATRIX_C has a value
     ; of 0x1F1A0706.  If it does, branch to 
     ; PASSED
     ; <ADD CODE  10 >
-	POP {R6,R4,R5}
-	LDR R7, [R6]
-	MOV32 R8, #0x1F1A0706
-	CMP R7, R8
-	BEQ PASSED
     
 
 FAIL

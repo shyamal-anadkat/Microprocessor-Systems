@@ -2,64 +2,83 @@
 <body>
 <pre>
 <h1>µVision Build Log</h1>
-<h2>Tool Versions:</h2>
-IDE-Version: µVision V5.18a
-Copyright (C) 2016 ARM Ltd and ARM Germany GmbH. All rights reserved.
-License Information: Joe Krachey UW-Madison Flex license: MDK-ARM Professional: 300 user(s) (mdk_pro) Operation stops: 22 Aug 2017
- 
-Tool Versions:
-Toolchain:       MDK-ARM Professional: 300 user(s)  Version: 5.18a
-Toolchain Path:  C:\Keil_v5\ARM\ARMCC\Bin
-C Compiler:      Armcc.exe V5.06 update 1 (build 61)
-Assembler:       Armasm.exe V5.06 update 1 (build 61)
-Linker/Locator:  ArmLink.exe V5.06 update 1 (build 61)
-Library Manager: ArmAr.exe V5.06 update 1 (build 61)
-Hex Converter:   FromElf.exe V5.06 update 1 (build 61)
-CPU DLL:         SARMCM3.DLL V5.18a
-Dialog DLL:      DCM.DLL V1.13.6.0
-Target DLL:      lmidk-agdi.dll V???
-Dialog DLL:      TCM.DLL V1.14.8.0
- 
 <h2>Project:</h2>
-C:\Users\joe.krachey\Documents\ece353-src\student-v2.0\ICE-08-Intro-to-C\ICE-08-Intro-To-C.uvprojx
-Project File Date:  08/05/2016
+I:\ECE353\ICE-08-Intro-to-C\ICE-08-Intro-To-C.uvprojx
+Project File Date:  02/20/2017
 
 <h2>Output:</h2>
-*** Using Compiler 'V5.06 update 1 (build 61)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
-Build target 'ICE-08-Intro-To-C'
+Rebuild target 'ICE-08-Intro-To-C'
+compiling ws2812b_ice.c...
 compiling main.c...
+assembling ws2812b.s...
+assembling startup_TM4C123.s...
+compiling system_TM4C123.c...
 linking...
-Program Size: Code=12832 RO-data=744 RW-data=900 ZI-data=4124  
+Program Size: Code=13076 RO-data=744 RW-data=940 ZI-data=540  
 ".\obj\ece353_base_project.axf" - 0 Error(s), 0 Warning(s).
 
 <h2>Software Packages used:</h2>
 
 Package Vendor: ARM
-                http://www.keil.com/pack/ARM.CMSIS.4.5.0.pack
-                ARM::CMSIS:CORE:4.3.0
+                http://www.keil.com/pack/ARM.CMSIS.4.1.1.pack
+                ARM::CMSIS:CORE:3.30.0
                 CMSIS (Cortex Microcontroller Software Interface Standard)
-   * Component: CORE Version: 4.3.0
+   * Component: CORE Version: 3.30.0
 
 Package Vendor: Keil
-                http://www.keil.com/pack/Keil.TM4C_DFP.1.1.0.pack
-                Keil::Device:Startup:1.0.1
+                http://www.keil.com/pack/Keil.TM4C_DFP.1.0.0.pack
+                Keil::Device:Startup:1.0.0
                 Texas Instruments Tiva C Series Device Support and Examples
-   * Component: Startup Version: 1.0.1
+   * Component: Startup Version: 1.0.0
 
 <h2>Collection of Component include folders:</h2>
-  C:\Users\joe.krachey\Documents\ece353-src\student-v2.0\ICE-08-Intro-to-C\RTE
-  C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include
-  C:\Keil_v5\ARM\PACK\Keil\TM4C_DFP\1.1.0\Device\Include\TM4C123
+  I:\ECE353\ICE-08-Intro-to-C\RTE
+  C:\AppV\mdk_510\ARM\PACK\ARM\CMSIS\4.1.1\CMSIS\Include
+  C:\AppV\mdk_510\ARM\PACK\Keil\TM4C_DFP\1.0.0\Device\Include\TM4C123
 
 <h2>Collection of Component Files used:</h2>
 
-   * Component: ARM::CMSIS:CORE:4.3.0
+   * Component: ARM::CMSIS:CORE:3.30.0
+      Source file:   CMSIS\UserCodeTemplates\ARM\ITM_Retarget.c
 
-   * Component: Keil::Device:Startup:1.0.1
+   * Component: Keil::Device:Startup:1.0.0
       Source file:   Device\Source\system_TM4C123.c
-      Include file:  Device\Include\TM4C123\TM4C123.h
       Source file:   Device\Source\ARM\startup_TM4C123.s
-Build Time Elapsed:  00:00:00
+      Include file:  Device\Include\TM4C123\TM4C123.h
+Load "I:\\ECE353\\ICE-08-Intro-to-C\\obj\\ece353_base_project.axf" 
+Connecting: Mode=JTAG, Speed=1000000Hz
+Erase Done.
+Programming Done.
+Verify OK.
 </pre>
 </body>
 </html>
+t.axf" 
+Connecting: Mode=JTAG, Speed=1000000Hz
+Erase Done.
+Programming Done.
+Verify OK.
+ware Interface Standard)
+   * Component: CORE Version: 3.30.0
+
+Package Vendor: Keil
+                http://www.keil.com/pack/Keil.TM4C_DFP.1.0.0.pack
+                Keil::Device:Startup:1.0.0
+                Texas Instruments Tiva C Series Device Support and Examples
+   * Component: Startup Version: 1.0.0
+
+<h2>Collection of Component include folders:</h2>
+  I:\ECE353\ICE-08-Intro-to-C\RTE
+  C:\AppV\mdk_510\ARM\PACK\ARM\CMSIS\4.1.1\CMSIS\Include
+  C:\AppV\mdk_510\ARM\PACK\Keil\TM4C_DFP\1.0.0\Device\Include\TM4C123
+
+<h2>Collection of Component Files used:</h2>
+
+   * Component: ARM::CMSIS:CORE:3.30.0
+      Source file:   CMSIS\UserCodeTemplates\ARM\ITM_Retarget.c
+
+   * Component: Keil::Device:Startup:1.0.0
+      Source file:   Device\Source\system_TM4C123.c
+      Source file:   Device\Source\ARM\startup_TM4C123.s
+      Include file:  Device\Include\TM4C123\TM4C123.h
+Target not created

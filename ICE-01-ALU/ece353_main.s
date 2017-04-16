@@ -51,7 +51,7 @@ __main   PROC
     
     ; CHECK POINT (6)
     ; Invert ONLY bits 3-9 of R1
-	MOV R7, #0x03F8
+	MOV R7, #0x3F8
 	EOR R1, R7, R1
 	
 
@@ -63,16 +63,13 @@ __main   PROC
     ; Total the bytes in R0 and place the results in R2
     ; R2 = R0[31:24] + R0[23:16] + R0[15:8] + R0[7:0]
     ; Treat each byte an an unsigned 8-bit number
-	AND R8, R0, #0x000000FF 
-	AND R9, R0, #0x0000FF00
-	ASR R9, R9, #8
-	ADD R10, R8, R9
-	AND R11, R0, #0x00FF0000
-	ASR R11, R11, #16
-	AND R12, R0, #0xFF000000
-	ASR R12, R12, #24 
-	ADD R4, R11, R12
-	ADD R2, R4, R10
+    AND     R2, R0, #0xFF
+    AND     R3, R0, #0xFF00
+    ADD     R2, R2, R3, LSR #8
+    AND     R3, R0, #0xFF0000
+    ADD     R2, R2, R3, LSR #16
+    AND     R3, R0, #0xFF000000
+    ADD     R2, R2, R3, LSR #24
 
     ; CHECK POINT (9) 
     ; Initialize R4 to be decimal value 100

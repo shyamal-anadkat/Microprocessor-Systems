@@ -3,18 +3,12 @@
  * Auto generated Run-Time-Environment Component Configuration File
  *      *** Do not modify ! ***
  *
- * Project: 'ICE-02-ConditionalInstructions' 
- * Target:  'ICE-02-Conditional_Instructions' 
+ * Project: 'ICE-02A-ConditionalInstructions' 
+ * Target:  'Target 1' 
  */
 
 #ifndef RTE_COMPONENTS_H
 #define RTE_COMPONENTS_H
-
-
-/*
- * Define the Device Header File: 
- */
-#define CMSIS_device_header "TM4C123.h"
 
 
 #endif /* RTE_COMPONENTS_H */

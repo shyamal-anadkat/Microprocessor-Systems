@@ -122,23 +122,30 @@ __main   PROC
     MOVLT R8, #700
     
     
-    ; (9) If R0 >= 15 AND R1 < 150, then R9 = 800, else R9 = 8
-	MOV R9, #800
+    ; (9) If R0 >= 15 AND R1 < 150, then R9 <- 0 , else R9 <-1
+	MOV R9, #0
 	CMP R0, #15
-	MOVLT R9, #8
+	MOVLT R9, #1
 	CMP R0, #150
-	MOVGE R9, #8 
+	MOVGE R9, #1
 
 
     MOV32   R0, #0xFFF000FF
-    ; (10) If bit 2 OR bit 21 of register R0 is a 1, then R1 = 900 , else R1 = 9
-    MOV R1, #9 
+    ; (10) If bit 2 OR bit 21 is 1, then R1 <- 0, else R1 <- 1
+	MOV R1, #1
 	TST R0, #0x00000004
-	MOVNE R1, #900
+	MOVNE R1, #0
 	TST R0, #0x00200000
-	MOVNE R1, #900
+	MOVNE R1, #0
+   
+	MOV32   R0, 0xDEADBEEF
     
-    
+    ; If bit0 AND bit 31 are both 1, set R1 to 1, else set R1 to 0
+	MOV R1,#1 
+	TST R0, #0x1
+    MOVEQ R1, #0
+	TST R0, #0x80000000
+	MOVEQ R1, #0
     ; DO NOT MODIFY ANTHING BELOW THIS LINE!!!	
         
 INFINITE_LOOP

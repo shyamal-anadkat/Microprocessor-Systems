@@ -85,17 +85,18 @@ bool initialize_spi( uint32_t base_addr, uint8_t spi_mode, uint32_t cpsr)
     
     // ************* ADD CODE *********************** //
     // Disable the SSI interface (Set entire register to 0).
-
+		mySSI->CR1 =0;
     
     // ************* ADD CODE *********************** //
     // Assume that we have a 50MHz clock
     // FSSIClk = FSysClk / (CPSDVSR * (1 + SCR))
     // Use the cpsr variable to set the CPSDVSR bits.  Set the SCR CR0 to 0.
-
+		mySSI->CPSR = 2;
+    mySSI->CR0  &=  ~SSI_CR0_SCR_M;
 
     // ************* ADD CODE *********************** //
     // Configure SPI control for freescale format, data width of 8 bits
-
+		mySSI->CR0 =   (SSI_CR0_DSS_8 | SSI_CR0_FRF_MOTO);
     
     // ************* ADD CODE *********************** //
     // Configure the SPI MODE in CR0
@@ -103,29 +104,29 @@ bool initialize_spi( uint32_t base_addr, uint8_t spi_mode, uint32_t cpsr)
     {
       case 0:
       {
-        mySSI->CR0 |=  0;
+        mySSI->CR0 |=   (0x0 << 6);
         break;
       }
       case 1:
       {
-        mySSI->CR0 |=  0;
+        mySSI->CR0 |=   (0x2 << 6);
         break;
       }
       case 2:
       {
-        mySSI->CR0 |=  0;
+        mySSI->CR0 |=  (0x1 << 6);
         break;
       }
       case 3:
       {
-        mySSI->CR0 |=  0;
+        mySSI->CR0 |=  (0x3 << 6);
         break;
       }
     }
     
     // ************* ADD CODE *********************** //
     //Enable SSI peripheral in master mode
-    
+    mySSI->CR1 |= SSI_CR1_SSE;
 
   return true;
 }

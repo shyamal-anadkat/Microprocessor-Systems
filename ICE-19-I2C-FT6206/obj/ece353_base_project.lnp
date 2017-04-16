@@ -5,7 +5,7 @@
 ".\obj\pc_buffer.o"
 ".\obj\uart.o"
 ".\obj\timers.o"
-"..\..\student\lib\ECE353-Validate.lib"
+"..\lib\ECE353-Validate.lib"
 ".\obj\serial_debug.o"
 ".\obj\ft6x06.o"
 ".\obj\startup_tm4c123.o"

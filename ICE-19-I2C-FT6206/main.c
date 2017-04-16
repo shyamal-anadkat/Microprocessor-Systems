@@ -88,17 +88,25 @@ main(void)
   printf("* In Class - I2C FT6206\n\r");
   printf("**************************************\n\r");
  
-  
   while(1){
     
-    // ADD CODE
     // Determine how many active touch events there are.  If there are more than
     // 0, then read the x and y coordinates and print them out to the serial debug
-    // teriminal using printf.
-    
+    // teriminal using printf
+		
+		touch_event = ft6x06_read_td_status();
+		//printf("td status read: %d\n\r", touch_event); //DEBUG
+		
+		if(touch_event > 0 && touch_event!=255) {
+			
+			//print out x and y coordinates 
+			x = ft6x06_read_x();
+			y = ft6x06_read_y();
+			
+			printf("Touch Events :\tX: %d\t||\tY: %d \n\r", x, y);
+		} 
+	
     gp_timer_wait(TIMER0_BASE, 5000000);
-  
-  
   };
 
 }

@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\obj\ece353_base_project.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\obj\ece353_base_project.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060422: Last Updated: Wed Feb 08 18:41:16 2017
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5040049: Last Updated: Fri Feb 10 16:56:26 2017
 <BR><P>
 <H3>Maximum Stack Usage =          0 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -1086,23 +1086,14 @@ Global Symbols
 <P><STRONG><a name="[76]"></a>SystemInit</STRONG> (Thumb, 112 bytes, Stack size 0 bytes, system_tm4c123.o(.text))
 <BR>[Address Reference Count : 1]<UL><LI> startup_tm4c123.o(.text)
 </UL>
-<P><STRONG><a name="[77]"></a>__main</STRONG> (Thumb, 92 bytes, Stack size 0 bytes, ece353_main.o(FLASH))
-<BR><BR>[Calls]<UL><LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;matrixMultiply
-<LI><a href="#[7b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;initVar
-</UL>
+<P><STRONG><a name="[77]"></a>__main</STRONG> (Thumb, 16 bytes, Stack size 0 bytes, ece353_main.o(FLASH))
 <BR>[Address Reference Count : 1]<UL><LI> startup_tm4c123.o(.text)
 </UL>
-<P><STRONG><a name="[7c]"></a>matrixMultiply</STRONG> (Thumb, 96 bytes, Stack size 0 bytes, matrixmultiply.o(FLASH))
-<BR><BR>[Called By]<UL><LI><a href="#[77]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__main
-</UL>
+<P><STRONG><a name="[7b]"></a>matrixMultiply</STRONG> (Thumb, 82 bytes, Stack size 0 bytes, matrixmultiply.o(FLASH), UNUSED)
 <P>
 <H3>
 Local Symbols
 </H3>
-<P><STRONG><a name="[7b]"></a>initVar</STRONG> (Thumb, 46 bytes, Stack size 0 bytes, ece353_main.o(FLASH))
-<BR><BR>[Called By]<UL><LI><a href="#[77]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__main
-</UL>
-
 <P><STRONG><a name="[7a]"></a>getOscClk</STRONG> (Thumb, 182 bytes, Stack size 0 bytes, system_tm4c123.o(.text), UNUSED)
 <BR><BR>[Called By]<UL><LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SystemCoreClockUpdate
 </UL>

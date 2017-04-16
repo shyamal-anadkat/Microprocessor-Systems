@@ -6,7 +6,7 @@ ARM Macro Assembler    Page 1
 
     1 00000000         ; Filename:     leds_write.s
     2 00000000         ; Author:       Shyamal Anadkat
-    3 00000000         ; Description:  writing to leds
+    3 00000000         ; Description:  
     4 00000000         
     5 00000000                 export           write_leds
     6 00000000         ;*******************************************************
@@ -61,212 +61,169 @@ ARM Macro Assembler    Page 1
                                                              for 24-bit loop
    24 00000000         
    25 00000000         ;*******************************************************
-                       *************************
-   26 00000000         ; function write_leds
+                       ************************* 
+   26 00000000         ;*******************************************************
 
 
 
 ARM Macro Assembler    Page 2 
 
 
-   27 00000000         ;  
-   28 00000000         ; Description: 
-   29 00000000         ;  writes to leds and maintains neopixels
-   30 00000000         ; Parameters: R0 - LED ARRAY ADDR
-   31 00000000         ;     R1 - NUM_LEDS
-   32 00000000         ;     R2 - GPIO_ADDRESS
-   33 00000000         ;
-   34 00000000         ; Returns: 
-   35 00000000         ;*******************************************************
                        *************************        
-   36 00000000         write_leds
+   27 00000000         write_leds
                                PROC
-   37 00000000         ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   28 00000000         ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                        ;;;
-   38 00000000         ;; LED_ARRAY_ADDR will be passed value of led_array_addr
+   29 00000000         ;; LED_ARRAY_ADDR will be passed value of led_array_addr
                         ;;
-   39 00000000         ;; NUM_LEDS will be passed array size (number of LEDs)  
+   30 00000000         ;; NUM_LEDS will be passed array size (number of LEDs)  
                         ;;
-   40 00000000         ;; GPIO_ADDR will be passed the address of the GPIO port
+   31 00000000         ;; GPIO_ADDR will be passed the address of the GPIO port
                         ;;
-   41 00000000         ;; the LEDs are connected to                            
+   32 00000000         ;; the LEDs are connected to                            
                         ;;
-   42 00000000         ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   33 00000000         ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                        ;;;
-   43 00000000         
-   44 00000000 E92D 01F0       PUSH             {R4-R8}     ; Store off registe
-                                                            rs modified to make
-                                                             EABI compliant
-   45 00000004         
-   46 00000004 F04F 0580       MOV              LOGIC_HIGH, #0x80 ; used to wri
+   34 00000000         
+   35 00000000         ;; TODO -- Store off registers modified to make EABI com
+                       pliant
+   36 00000000         
+   37 00000000 F04F 0580       MOV              LOGIC_HIGH, #0x80 ; used to wri
                                                             te a 1 to port pin
-   47 00000008 F04F 0600       MOV              LOGIC_LOW, #0x00 ; used to writ
+   38 00000004 F04F 0600       MOV              LOGIC_LOW, #0x00 ; used to writ
                                                             e a 0 to port pin
-   48 0000000C F101 0301       ADD              LED_INDEX, NUM_LEDS, #1 ; start
+   39 00000008 F101 0301       ADD              LED_INDEX, NUM_LEDS, #1 ; start
                                                              LED_INDEX at NUM_L
                                                             EDS+1 because decre
                                                             mented immediately 
                                                             in loop
-   49 00000010         
-   50 00000010         write_loop                           ; for number of Neo
+   40 0000000C         
+   41 0000000C         write_loop                           ; for number of Neo
                                                             Pixels to write
-   51 00000010 1E5B            SUBS             LED_INDEX, LED_INDEX, #1 ; subt
+   42 0000000C 1E5B            SUBS             LED_INDEX, LED_INDEX, #1 ; subt
                                                             ract 1 from index
-   52 00000012 2B00            CMP              LED_INDEX, #0 
+   43 0000000E 2B00            CMP              LED_INDEX, #0 
                                                             ; is index zero...
-   53 00000014 D03C            BEQ              done_write  ;    if so we are d
+   44 00000010 D025            BEQ              done_write  ;    if so we are d
                                                             one
-   54 00000016 F850 4B04       LDR              LED_DATA, [LED_ARRAY_ADDR], #4 
+   45 00000012 F850 4B04       LDR              LED_DATA, [LED_ARRAY_ADDR], #4 
                                                             ; read 24-bit LED d
                                                             ata and increment p
                                                             ointer to next LED 
                                                             data
-   55 0000001A F04F 0818       MOV              BIT_INDX, #24 ; index on bit lo
+   46 00000016 F04F 0818       MOV              BIT_INDX, #24 ; index on bit lo
                                                             op for 24 bits in a
                                                              LED
-   56 0000001E         
-   57 0000001E         bit_loop
-   58 0000001E 7015            STRB             LOGIC_HIGH, [GPIO_ADDR] ; all N
+   47 0000001A         
+   48 0000001A         bit_loop
+   49 0000001A 7015            STRB             LOGIC_HIGH, [GPIO_ADDR] ; all N
                                                             eoPixel bits begin 
+                                                            with logic high wri
+                                                            te to GPIO
+   50 0000001C F414 0F00       TST              LED_DATA, #0x00800000 ; is MSB 
+                                                            of LED_DATA set
+   51 00000020 EA4F 0444       MOV              LED_DATA, LED_DATA, LSL #1 ; sh
+                                                            ift register left t
+                                                            o get to next bit
+   52 00000024 D00D            BEQ              write_zero  ; if MSB of data wa
+                                                            s not set we write 
+                                                            logic zero to seria
 
 
 
 ARM Macro Assembler    Page 3 
 
 
-                                                            with logic high wri
-                                                            te to GPIO
-   59 00000020 F414 0F00       TST              LED_DATA, #0x00800000 ; is MSB 
-                                                            of LED_DATA set
-   60 00000024 EA4F 0444       MOV              LED_DATA, LED_DATA, LSL #1 ; sh
-                                                            ift register left t
-                                                            o get to next bit
-   61 00000028 D018            BEQ              write_zero  ; if MSB of data wa
-                                                            s not set we write 
-                                                            logic zero to seria
                                                             l out
-   62 0000002A         ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-   63 0000002A         ;; Below is write a "1" to NeoPixel ;;
-   64 0000002A         ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-   65 0000002A F04F 0708       MOV              DELAY_INDX, #8 ; currently at 4
+   53 00000026         ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   54 00000026         ;; Below is write a "1" to NeoPixel ;;
+   55 00000026         ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   56 00000026 F04F 0708       MOV              DELAY_INDX, #8 ; currently at 4
                                                              clock cycles of hi
                                                             gh, need 40 total, 
                                                             (8-1)*4+2 = 30 cloc
                                                             k cycles
-   66 0000002E         high_delay1                          ; loop below takes 
+   57 0000002A         high_delay1                          ; loop below takes 
                                                             (N-1)*4+2 clock cyc
                                                             les.  Using N of 7,
                                                              to get 30 cyles of
                                                              delay
-   67 0000002E 1E7F            SUBS             DELAY_INDX, DELAY_INDX, #1
-   68 00000030 D1FD            BNE              high_delay1
-   69 00000032         ;; Add 6 NOPs to flush out needed delay for total of 40 
-                       clocks with logic high on pin
-   70 00000032 BF00            NOP
-   71 00000034 BF00            NOP
-   72 00000036 BF00            NOP
-   73 00000038 BF00            NOP
-   74 0000003A BF00            NOP
-   75 0000003C BF00            NOP
-   76 0000003E 7016            STRB             LOGIC_LOW, [GPIO_ADDR] ; clear 
+   58 0000002A 1E7F            SUBS             DELAY_INDX, DELAY_INDX, #1
+   59 0000002C D1FD            BNE              high_delay1
+   60 0000002E         ;; TODO -- add NOPs to flush out needed delay for total 
+                       of 40 clocks with logic high on pin
+   61 0000002E 7016            STRB             LOGIC_LOW, [GPIO_ADDR] ; clear 
                                                             GPIO pin as part of
                                                              a write of "1" to 
                                                             LED, now need 22 lo
                                                             w cycles
-   77 00000040 F04F 0703       MOV              DELAY_INDX, #3 ; (3-1)*4+2 = 10
+   62 00000030 F04F 0703       MOV              DELAY_INDX, #3 ; (3-1)*4+2 = 10
                                                              clock cycles delay
                                                             , need 22 low prior
                                                              to next write of "
                                                             1"
-   78 00000044         low_delay1
-   79 00000044 1E7F            SUBS             DELAY_INDX, DELAY_INDX, #1
-   80 00000046 D1FD            BNE              low_delay1
-   81 00000048 BF00            NOP
-   82 0000004A F1B8 0801       SUBS             BIT_INDX, BIT_INDX, #1 ; decrem
+   63 00000034         low_delay1
+   64 00000034 1E7F            SUBS             DELAY_INDX, DELAY_INDX, #1
+   65 00000036 D1FD            BNE              low_delay1
+   66 00000038 BF00            NOP
+   67 0000003A F1B8 0801       SUBS             BIT_INDX, BIT_INDX, #1 ; decrem
                                                             ent bit index
-   83 0000004E D0DF            BEQ              write_loop  ; done with this 24
+   68 0000003E D0E5            BEQ              write_loop  ; done with this 24
                                                             -bits of LED data, 
                                                             move on to next 24-
                                                             bits of LED data
-   84 00000050         ; 5 NOPs to flush out needed delay for total of 22 clock
-                       s with logic low on pin
-   85 00000050 BF00            NOP
-   86 00000052 BF00            NOP
-   87 00000054 BF00            NOP
+   69 00000040         ;; TODO -- add NOPs to flush out needed delay for total 
+                       of 22 clocks with logic low on pin
+   70 00000040 E7EB            B                bit_loop
+   71 00000042         
+   72 00000042         write_zero
+   73 00000042 F04F 0703       MOV              DELAY_INDX, #3 ; (3-1)*4+2 = 10
+                                                             clock cycles delay
+                                                            , at 6 by end of th
+                                                            is instr, need 20 h
+                                                            igh
+   74 00000046         high_delay0
+   75 00000046 1E7F            SUBS             DELAY_INDX, DELAY_INDX, #1
+   76 00000048 D1FD            BNE              high_delay0
+   77 0000004A         ;; TODO -- add NOPs to flush out needed delay for total 
+                       of 20 clocks with logic high on pin
+   78 0000004A 7016            STRB             LOGIC_LOW, [GPIO_ADDR] 
+                                                            ; clear GPIO pin
+   79 0000004C F04F 0708       MOV              DELAY_INDX, #8 ; (8-1)*4+2 = 30
+                                                             clock cycles, need
+                                                             42 low
+   80 00000050         low_delay0
 
 
 
 ARM Macro Assembler    Page 4 
 
 
-   88 00000056 BF00            NOP
-   89 00000058 BF00            NOP
-   90 0000005A E7E0            B                bit_loop
-   91 0000005C         
-   92 0000005C         write_zero
-   93 0000005C F04F 0703       MOV              DELAY_INDX, #3 ; (3-1)*4+2 = 10
-                                                             clock cycles delay
-                                                            , at 6 by end of th
-                                                            is instr, need 20 h
-                                                            igh
-   94 00000060         high_delay0
-   95 00000060 1E7F            SUBS             DELAY_INDX, DELAY_INDX, #1
-   96 00000062 D1FD            BNE              high_delay0
-   97 00000064         ; 4 NOPs to flush out needed delay for total of 20 clock
-                       s with logic high on pin
-   98 00000064 BF00            NOP
-   99 00000066 BF00            NOP
-  100 00000068 BF00            NOP
-  101 0000006A BF00            NOP
-  102 0000006C 7016            STRB             LOGIC_LOW, [GPIO_ADDR] 
-                                                            ; clear GPIO pin
-  103 0000006E F04F 0708       MOV              DELAY_INDX, #8 ; (8-1)*4+2 = 30
-                                                             clock cycles, need
-                                                             42 low
-  104 00000072         low_delay0
-  105 00000072 1E7F            SUBS             DELAY_INDX, DELAY_INDX, #1
-  106 00000074 D1FD            BNE              low_delay0
-  107 00000076 BF00            NOP
-  108 00000078 F1B8 0801       SUBS             BIT_INDX, BIT_INDX, #1 ; decrem
+   81 00000050 1E7F            SUBS             DELAY_INDX, DELAY_INDX, #1
+   82 00000052 D1FD            BNE              low_delay0
+   83 00000054 BF00            NOP
+   84 00000056 F1B8 0801       SUBS             BIT_INDX, BIT_INDX, #1 ; decrem
                                                             ent bit index
-  109 0000007C D0C8            BEQ              write_loop  ; done with this 24
+   85 0000005A D0D7            BEQ              write_loop  ; done with this 24
                                                             -bits of LED data, 
                                                             move on to next 24-
                                                             bits of LED data
-  110 0000007E         ;8 NOPs to flush out needed delay for total of 42 clocks
-                        with logic low on pin
-  111 0000007E BF00            NOP
-  112 00000080 BF00            NOP
-  113 00000082 BF00            NOP
-  114 00000084 BF00            NOP
-  115 00000086 BF00            NOP
-  116 00000088 BF00            NOP
-  117 0000008A BF00            NOP
-  118 0000008C BF00            NOP
-  119 0000008E E7C6            B                bit_loop
-  120 00000090         
-  121 00000090         done_write
-  122 00000090 E8BD 01F0       POP              {R4-R8}     ;Restore registers 
-                                                            prior to return
-  123 00000094 4770            BX               LR          ; return from the f
-                                                            unction
-  124 00000096                 ENDP
-  125 00000096 00 00           align
-  126 00000098         
-  127 00000098                 END
-Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4.fp --apcs=int
-erwork --depend=.\obj\write_leds.d -o.\obj\write_leds.o -IC:\ECE353\HW1\RTE\_HW
-1 -IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.1\CMSIS\Include -IC:\Keil_v5\ARM\PACK\Kei
-l\TM4C_DFP\1.1.0\Device\Include\TM4C123 --predefine="__EVAL SETA 1" --predefine
-
-
-
-ARM Macro Assembler    Page 5 
-
-
-="__MICROLIB SETA 1" --predefine="__UVISION_VERSION SETA 522" --predefine="_RTE
-_ SETA 1" --predefine="TM4C123GH6PM SETA 1" --list=.\lst\write_leds.lst write_l
-eds.s
+   86 0000005C         ;; TODO -- add NOPs to flush out needed delay for total 
+                       of 42 clocks with logic low on pin
+   87 0000005C E7DD            B                bit_loop
+   88 0000005E         
+   89 0000005E         done_write
+   90 0000005E         ;; TODO -- Restore registers prior to return
+   91 0000005E         ;; TODO -- Return from function
+   92 0000005E                 ENDP
+   93 0000005E 00 00           align
+   94 00000060         
+   95 00000060                 END
+Command Line: --debug --xref --cpu=Cortex-M4.fp --apcs=interwork --depend=.\obj
+\write_leds.d -o.\obj\write_leds.o -II:\ECE353\HW1\RTE -IC:\AppV\mdk_510\ARM\PA
+CK\ARM\CMSIS\4.1.1\CMSIS\Include -IC:\AppV\mdk_510\ARM\PACK\Keil\TM4C_DFP\1.0.0
+\Device\Include\TM4C123 --predefine="__EVAL SETA 1" --predefine="__MICROLIB SET
+A 1" --list=.\lst\write_leds.lst write_leds.s
 
 
 
@@ -281,54 +238,54 @@ Symbol: FLASH
    Uses
       None
 Comment: FLASH unused
-bit_loop 0000001E
+bit_loop 0000001A
 
 Symbol: bit_loop
    Definitions
-      At line 57 in file write_leds.s
+      At line 48 in file write_leds.s
    Uses
-      At line 90 in file write_leds.s
-      At line 119 in file write_leds.s
+      At line 70 in file write_leds.s
+      At line 87 in file write_leds.s
 
-done_write 00000090
+done_write 0000005E
 
 Symbol: done_write
    Definitions
-      At line 121 in file write_leds.s
+      At line 89 in file write_leds.s
    Uses
-      At line 53 in file write_leds.s
+      At line 44 in file write_leds.s
 Comment: done_write used once
-high_delay0 00000060
+high_delay0 00000046
 
 Symbol: high_delay0
    Definitions
-      At line 94 in file write_leds.s
+      At line 74 in file write_leds.s
    Uses
-      At line 96 in file write_leds.s
+      At line 76 in file write_leds.s
 Comment: high_delay0 used once
-high_delay1 0000002E
+high_delay1 0000002A
 
 Symbol: high_delay1
    Definitions
-      At line 66 in file write_leds.s
+      At line 57 in file write_leds.s
    Uses
-      At line 68 in file write_leds.s
+      At line 59 in file write_leds.s
 Comment: high_delay1 used once
-low_delay0 00000072
+low_delay0 00000050
 
 Symbol: low_delay0
    Definitions
-      At line 104 in file write_leds.s
+      At line 80 in file write_leds.s
    Uses
-      At line 106 in file write_leds.s
+      At line 82 in file write_leds.s
 Comment: low_delay0 used once
-low_delay1 00000044
+low_delay1 00000034
 
 Symbol: low_delay1
    Definitions
-      At line 78 in file write_leds.s
+      At line 63 in file write_leds.s
    Uses
-      At line 80 in file write_leds.s
+      At line 65 in file write_leds.s
 Comment: low_delay1 used once
 write_leds 00000000
 
@@ -340,26 +297,26 @@ Relocatable symbols
 
 Symbol: write_leds
    Definitions
-      At line 36 in file write_leds.s
+      At line 27 in file write_leds.s
    Uses
       At line 5 in file write_leds.s
 Comment: write_leds used once
-write_loop 00000010
+write_loop 0000000C
 
 Symbol: write_loop
    Definitions
-      At line 50 in file write_leds.s
+      At line 41 in file write_leds.s
    Uses
-      At line 83 in file write_leds.s
-      At line 109 in file write_leds.s
+      At line 68 in file write_leds.s
+      At line 85 in file write_leds.s
 
-write_zero 0000005C
+write_zero 00000042
 
 Symbol: write_zero
    Definitions
-      At line 92 in file write_leds.s
+      At line 72 in file write_leds.s
    Uses
-      At line 61 in file write_leds.s
+      At line 52 in file write_leds.s
 Comment: write_zero used once
 10 symbols
-355 symbols in table
+352 symbols in table

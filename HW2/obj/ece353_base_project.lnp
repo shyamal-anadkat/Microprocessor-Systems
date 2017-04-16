@@ -1,4 +1,4 @@
---cpu=Cortex-M4.fp
+--cpu Cortex-M4.fp
 ".\obj\main.o"
 "..\lib\ECE353-Validate.lib"
 ".\obj\gpio_port.o"

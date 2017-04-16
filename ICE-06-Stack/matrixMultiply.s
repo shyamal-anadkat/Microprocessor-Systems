@@ -13,21 +13,18 @@ matrixMultiply   PROC
      
      ; Save registers modifed by this function
      ; <ADD CODE 5 >
-	 PUSH {R1, R3-R10}
+
 
      ; Load the 1st parameter from the stack into R2
      ; <ADD CODE  6 >
-	 LDR R2, [SP, #44]
 
      
      ; Load the 2nd parameter from the stack into R0
     ; <ADD CODE  7 >
-	 LDR R0, [SP, #36]
 
      
      ; Load the 3rd parameter from the stack into R1
      ; <ADD CODE  8 >
-	 LDR R1, [SP, #40]
 
      
      LDRSB   R3, [R0, #0] ; R3  - A00
@@ -73,7 +70,6 @@ matrixMultiply   PROC
     
      ; Restore any saved registers from the stack
      ; <ADD CODE  9 >
-	 POP {R1, R3-R10}
      
      BX     LR
      ENDP

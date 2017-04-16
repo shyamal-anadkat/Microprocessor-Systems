@@ -6,7 +6,7 @@ ARM Macro Assembler    Page 1
 
     1 00000000         ; Filename:     leds_init.s
     2 00000000         ; Author:       Shyamal Anadkat
-    3 00000000         ; Description:  Initilaizes LED color codes
+    3 00000000         ; Description: 
     4 00000000         
     5 00000000                 export           init_leds
     6 00000000         ;*******************************************************
@@ -25,102 +25,69 @@ ARM Macro Assembler    Page 1
    15 00000000                 AREA             FLASH, CODE, READONLY
    16 00000000                 align
    17 00000000         
-   18 00000000         ;****************************************
-   19 00000000         ; Rename registers for coad readability *
-   20 00000000         ;****************************************
-   21 00000000        0 
-                       LED_ARRAY_ADDR
-                               RN               R0          ; passed in as argu
-                                                            ment
-   22 00000000        1 
-                       UPDATE_LED_ADDR
-                               RN               R1          ; passed in as argu
-                                                            ment
-   23 00000000         
-   24 00000000         ;*******************************************************
+   18 00000000         ;*******************************************************
                        ************************* 
-   25 00000000         ; function init_leds
-   26 00000000         ;  
-   27 00000000         ; Description: 
-   28 00000000         ;  initializes color codes for each led 
-   29 00000000         ; Parameters:
-   30 00000000         ;  RO - address of led array 
-   31 00000000         ;  R1 - address of update led array  
-   32 00000000         ; Returns: 
-   33 00000000         ;
-   34 00000000         ;*******************************************************
+   19 00000000         ; function init_leds
+   20 00000000         ;  
+   21 00000000         ; Description: 
+   22 00000000         ;  initializes color codes for each led 
+   23 00000000         ; Parameters:
+   24 00000000         ;  RO - address of led array 
+   25 00000000         ;  R1 - address of update led array  
+   26 00000000         ; Returns: 
+   27 00000000         ;
+   28 00000000         ;*******************************************************
                        ************************* 
-   35 00000000         init_leds
+   29 00000000         ;; TODO -- Implement EABI compliant function init_leds
+   30 00000000         init_leds
                                PROC
-   36 00000000 E92D 0FF0       PUSH             {R4-R11}    ; save regs used 
-   37 00000004         
-   38 00000004         ;init LED color codes 
-   39 00000004         ;25- 3F, 50- 7F, 75 - BF
-   40 00000004         
-   41 00000004         ; LED 1
-   42 00000004 F647 7A00 
-              F2C0 0A00        MOV32            R10, #0x00007F00
-   43 0000000C F8C0 A000       STR              R10, [LED_ARRAY_ADDR, #0]
-   44 00000010         
-   45 00000010         ; LED 2
+   31 00000000         ;init LED color codes 
+   32 00000000         ; 25- 3F, 50- 7F, 75-BF
+   33 00000000 F647 7200 
+              F2C0 0200        MOV32            R2, #0x00007F00
+   34 00000008 6002            STR              R2, [R0, #0]
+   35 0000000A F647 7300 
+              F2C0 033F        MOV32            R3, #0x003F7F00
+   36 00000012 6043            STR              R3, [R0, #4]
+   37 00000014 F647 7400 
+              F2C0 047F        MOV32            R4, #0x007F7F00
+   38 0000001C 6084            STR              R4, [R0, #8]
+   39 0000001E F643 7500 
+              F2C0 057F        MOV32            R5, #0x007F3F00
+   40 00000026 60C5            STR              R5, [R0, #12]
+   41 00000028 F240 0600 
+              F2C0 067F        MOV32            R6, #0x007F0000
+   42 00000030 6106            STR              R6, [R0, #16]
+   43 00000032 F240 073F 
+              F2C0 077F        MOV32            R7, #0x007F003F
+   44 0000003A 6147            STR              R7, [R0, #20]
+   45 0000003C F240 087F 
+              F2C0 087F        MOV32            R8, #0x007F007F
 
 
 
 ARM Macro Assembler    Page 2 
 
 
-   46 00000010 F647 7B00 
-              F2C0 0B3F        MOV32            R11, #0x003F7F00
-   47 00000018 F8C0 B004       STR              R11, [LED_ARRAY_ADDR, #4]
-   48 0000001C         
-   49 0000001C         ; LED 3
-   50 0000001C F647 7400 
-              F2C0 047F        MOV32            R4, #0x007F7F00
-   51 00000024 6084            STR              R4, [LED_ARRAY_ADDR, #8]
-   52 00000026         
-   53 00000026         ; LED 4
-   54 00000026 F643 7500 
-              F2C0 057F        MOV32            R5, #0x007F3F00
-   55 0000002E 60C5            STR              R5, [LED_ARRAY_ADDR, #12]
-   56 00000030         
-   57 00000030         ; LED 5
-   58 00000030 F240 0600 
-              F2C0 067F        MOV32            R6, #0x007F0000
-   59 00000038 6106            STR              R6, [LED_ARRAY_ADDR, #16]
-   60 0000003A         
-   61 0000003A         ; LED 6
-   62 0000003A F240 073F 
-              F2C0 077F        MOV32            R7, #0x007F003F
-   63 00000042 6147            STR              R7, [LED_ARRAY_ADDR, #20]
-   64 00000044         
-   65 00000044         ; LED 7
-   66 00000044 F240 087F 
-              F2C0 087F        MOV32            R8, #0x007F007F
-   67 0000004C F8C0 8018       STR              R8, [LED_ARRAY_ADDR, #24]
-   68 00000050         
-   69 00000050         ; LED 8
-   70 00000050 F240 097F 
+   46 00000044 F8C0 8018       STR              R8, [R0, #24]
+   47 00000048 F240 097F 
               F2C0 093F        MOV32            R9, #0x003F007F
-   71 00000058 F8C0 901C       STR              R9, [LED_ARRAY_ADDR, #28]
-   72 0000005C         
-   73 0000005C         ;clear the 32-bit value pointed to by update_led_addr
-   74 0000005C F04F 0900       MOV              R9, #0
-   75 00000060 F8C1 9000       STR              R9, [UPDATE_LED_ADDR]
-   76 00000064         
-   77 00000064 E8BD 0FF0       POP              {R4-R11}    ; restore regs used
-                                                            
-   78 00000068 4770            BX               LR          ; return from the f
+   48 00000050 F8C0 901C       STR              R9, [R0, #28]
+   49 00000054         
+   50 00000054         ;clear the 32-bit value pointed to by update_led_addr
+   51 00000054 F240 0100 
+              F2C0 0100        MOV32            R1, #0
+   52 0000005C         
+   53 0000005C 4770            BX               LR          ; return from the f
                                                             unction
-   79 0000006A                 ENDP
-   80 0000006A         
-   81 0000006A                 END
-Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4.fp --apcs=int
-erwork --depend=.\obj\init_leds.d -o.\obj\init_leds.o -IC:\ECE353\HW1\RTE\_HW1 
--IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.1\CMSIS\Include -IC:\Keil_v5\ARM\PACK\Keil\
-TM4C_DFP\1.1.0\Device\Include\TM4C123 --predefine="__EVAL SETA 1" --predefine="
-__MICROLIB SETA 1" --predefine="__UVISION_VERSION SETA 522" --predefine="_RTE_ 
-SETA 1" --predefine="TM4C123GH6PM SETA 1" --list=.\lst\init_leds.lst init_leds.
-s
+   54 0000005E                 ENDP
+   55 0000005E         
+   56 0000005E                 END
+Command Line: --debug --xref --cpu=Cortex-M4.fp --apcs=interwork --depend=.\obj
+\init_leds.d -o.\obj\init_leds.o -II:\ECE353\HW1\RTE -IC:\AppV\mdk_510\ARM\PACK
+\ARM\CMSIS\4.1.1\CMSIS\Include -IC:\AppV\mdk_510\ARM\PACK\Keil\TM4C_DFP\1.0.0\D
+evice\Include\TM4C123 --predefine="__EVAL SETA 1" --predefine="__MICROLIB SETA 
+1" --list=.\lst\init_leds.lst init_leds.s
 
 
 
@@ -154,9 +121,9 @@ init_leds 00000000
 
 Symbol: init_leds
    Definitions
-      At line 35 in file init_leds.s
+      At line 30 in file init_leds.s
    Uses
       At line 5 in file init_leds.s
 Comment: init_leds used once
 2 symbols
-341 symbols in table
+336 symbols in table

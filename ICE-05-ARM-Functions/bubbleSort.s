@@ -1,5 +1,5 @@
-export bubble_sort
-export swap_values
+	export bubble_sort
+	export swap_values
         
     AREA    FLASH, CODE, READONLY
     ALIGN
@@ -22,19 +22,20 @@ swap_values PROC
      ;---------------------------------------
      ; START ADD CODE
      ;---------------------------------------
-     
-	 ; load current and next byte 
-	 LDR R8, [R7]
-	 LDR R9, [R7, #1]
+	 ; load current and next byte
+	 LDRB R8, [R7, #0]
+	 LDRB R9, [R7, #1]
 	 
 	 ; Check to see if next value if less than curr value 
 	 CMP R9, R8
 	 
 	 ; if so, swap values 
-	 MOVLO R10, R9
-	 MOVLO R9, R8
-	 MOVLO R8, R10 
-     
+	 STRBLO R8, [R7, #1]
+	 STRBLO R9, [R7, #0]
+
+	 
+	 BX LR
+
      ;---------------------------------------
      ; END ADD CODE
      ;---------------------------------------
@@ -65,24 +66,33 @@ bubble_sort PROC
      ;---------------------------------------
      ;verify if array addr != 0 
 	 CMP R0, #0
-     BXEQ LR 
-	 
-	 MOV R7, R0 
-	 MOV R2, #1
+ 
+	 SUB R1, R1, #1 
 
-while_start 
+while1_start 
+	 
 	 ;if reached end of array 
-	 CMP R2, R1
-	 BHS while_end
+	 CMP R1, #0
+	 BEQ while1_end
 	 
-	 LDR R3, =(swap_values)
-	 BLX R3
+while2_start
+	 MOV R4, #0 
 	 
-	 ;increment counter 
-	 ADD R2, R2, #1
+	 CMP R4, R1
+	 BHS while2_end
+	 
+	 ADD R7, R0, R4
+	 
+	 BL swap_values
+	 
+	 ADD R4, R4, #1 
+	 
+	 B while2_start
+while2_end
+	 SUB R1, R1, #1
+	 B while1_start
+while1_end
 
-while_end
-     
      
      ; NOTE: The return from the function is already
      ; provided below

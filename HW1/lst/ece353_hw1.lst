@@ -6,7 +6,7 @@ ARM Macro Assembler    Page 1
 
     1 00000000         ; Filename:     ece353_hw1
     2 00000000         ; Author:       Shyamal Anadkat 
-    3 00000000         ; Description:  hw1.s
+    3 00000000         ; Description:  
     4 00000000         
     5 00000000                 export           hw1
     6 00000000                 export           WS2812B_LEDS
@@ -49,117 +49,40 @@ ARM Macro Assembler    Page 1
    23 00000024                 AREA             FLASH, CODE, READONLY
    24 00000000                 align
    25 00000000         
-   26 00000000         ;****************************************
-   27 00000000         ; Rename registers for coad readability *
-   28 00000000         ;****************************************
-   29 00000000        0 
-                       LEDS    RN               R0
-   30 00000000        1 
-                       UPDATE  RN               R1
-   31 00000000        2 
-                       GPIO    RN               R2
-   32 00000000        4 
-                       ZERO    RN               R4
-   33 00000000         
-   34 00000000         ;*******************************************************
+   26 00000000         ;*******************************************************
                        ************************* 
+   27 00000000         ;*******************************************************
+                       ************************* 
+   28 00000000         hw1     PROC
+   29 00000000         
+   30 00000000         ;; TODO -- Setup argument to pass to init_leds
+   31 00000000 4803            LDR              R0, =(WS2812B_LEDS)
+   32 00000002 4904            LDR              R1, =(UPDATE_LEDS)
+   33 00000004         ;; TODO -- call init_leds routine
+   34 00000004 F7FF FFFE       BL               init_leds
+   35 00000008         infinite_loop
+   36 00000008         ;; TODO -- do stuff specified in HW1 problem statement
+   37 00000008 F7FF FFFE       BL               write_leds
 
 
 
 ARM Macro Assembler    Page 2 
 
 
-   35 00000000         ; function hw1
-   36 00000000         ;  
-   37 00000000         ; Description: main execution
-   38 00000000         ;
-   39 00000000         ; Parameters:  
-   40 00000000         ; Returns: 
-   41 00000000         ;*******************************************************
-                       ************************* 
-   42 00000000         hw1     PROC
-   43 00000000         
-   44 00000000         ;Setup argument to pass to init_leds
-   45 00000000 4811            LDR              LEDS,   =(WS2812B_LEDS) ;load a
-                                                            ddress of LEDS into
-                                                             R0 
-   46 00000002 4912            LDR              UPDATE, =(UPDATE_LEDS) ;load ad
-                                                            dress of UPDATE_LED
-                                                            S into R1
-   47 00000004         
-   48 00000004         ;call init_leds routine 
-   49 00000004 B403            PUSH             {LEDS,UPDATE} ;EABI caller save
-                                                            
-   50 00000006 F7FF FFFE       BL               init_leds   ;call init_leds wit
-                                                            h params R0, R1 
-   51 0000000A BC03            POP              {LEDS, UPDATE} ;EABI caller res
-                                                            tore
-   52 0000000C         
-   53 0000000C         infinite_loop
-   54 0000000C         
-   55 0000000C         ;Check if update_leds is non-zero to continue 
-   56 0000000C 490F            LDR              UPDATE, =(UPDATE_LEDS) 
-                                                            ;init UPDATE_LEDS
-   57 0000000E 680D            LDR              R5, [UPDATE] ;get value of UPDA
-                                                            TE_LEDS into R5
-   58 00000010 F04F 0400       MOV              ZERO, #0    ;move 0 to R4 to co
-                                                            mpare
-   59 00000014 42AC            CMP              ZERO, R5    ;check if UPDATE_LE
-                                                            DS value is zero 
-   60 00000016 D0F9            BEQ              infinite_loop ;if so, branch to
-                                                             start of infinite 
-                                                            loop 
-   61 00000018         
-   62 00000018         ;Execute the assembly instruction “CPSID I” 
-   63 00000018 B672            CPSID            I
-   64 0000001A         
-   65 0000001A         ;Set update-leds to 0 
-   66 0000001A 600C            STR              ZERO, [UPDATE]
-   67 0000001C         
-   68 0000001C         ;Call rotate_mod_leds
-   69 0000001C 480A            LDR              LEDS, =(WS2812B_LEDS) 
-                                                            ;init first arg
-   70 0000001E F04F 0108       MOV              UPDATE, #8  ;pass in second par
-                                                            ameter 
-   71 00000022 B403            PUSH             {R0,R1}     ;EABI store reg
-   72 00000024 F7FF FFFE       BL               rotate_mod_leds ;call rotate_mo
-                                                            d_leds
-   73 00000028 BC03            POP              {R0,R1}     ;EABI restore reg
-   74 0000002A         
-   75 0000002A         ;Call write_leds 
-   76 0000002A 4807            LDR              LEDS, =(WS2812B_LEDS) 
-
-
-
-ARM Macro Assembler    Page 3 
-
-
-                                                            ;init 1st arg
-   77 0000002C F04F 0108       MOV              UPDATE, #8  ;init 2nd argument
-   78 00000030 F247 32FC 
-              F2C4 0200        MOV32            GPIO, #0x400073FC 
-                                                            ;pass in 3rd arg 
-   79 00000038 B40F            PUSH             {R0-R3}     ;EABI save reg
-   80 0000003A F7FF FFFE       BL               write_leds  ;call writ_leds
-   81 0000003E BC0F            POP              {R0-R3}     ;EABI restore reg
-   82 00000040         
-   83 00000040         ;Execute the assembly instruction “CPSIE I”. 
-   84 00000040 B662            CPSIE            I
-   85 00000042 E7E3            B                infinite_loop
-   86 00000044 4770            BX               LR          ;return
-   87 00000046                 ENDP
-   88 00000046 00 00           align
-   89 00000048         
-   90 00000048                 END
+   38 0000000C E7FC            B                infinite_loop
+   39 0000000E         
+   40 0000000E                 ENDP
+   41 0000000E 00 00           align
+   42 00000010         
+   43 00000010         
+   44 00000010                 END
               00000000 
               00000000 
-Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4.fp --apcs=int
-erwork --depend=.\obj\ece353_hw1.d -o.\obj\ece353_hw1.o -IC:\ECE353\HW1\RTE\_HW
-1 -IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.1\CMSIS\Include -IC:\Keil_v5\ARM\PACK\Kei
-l\TM4C_DFP\1.1.0\Device\Include\TM4C123 --predefine="__EVAL SETA 1" --predefine
-="__MICROLIB SETA 1" --predefine="__UVISION_VERSION SETA 522" --predefine="_RTE
-_ SETA 1" --predefine="TM4C123GH6PM SETA 1" --list=.\lst\ece353_hw1.lst ece353_
-hw1.s
+Command Line: --debug --xref --cpu=Cortex-M4.fp --apcs=interwork --depend=.\obj
+\ece353_hw1.d -o.\obj\ece353_hw1.o -II:\ECE353\HW1\RTE -IC:\AppV\mdk_510\ARM\PA
+CK\ARM\CMSIS\4.1.1\CMSIS\Include -IC:\AppV\mdk_510\ARM\PACK\Keil\TM4C_DFP\1.0.0
+\Device\Include\TM4C123 --predefine="__EVAL SETA 1" --predefine="__MICROLIB SET
+A 1" --list=.\lst\ece353_hw1.lst ece353_hw1.s
 
 
 
@@ -181,8 +104,7 @@ Symbol: UPDATE_LEDS
       At line 16 in file ece353_hw1.s
    Uses
       At line 7 in file ece353_hw1.s
-      At line 46 in file ece353_hw1.s
-      At line 56 in file ece353_hw1.s
+      At line 32 in file ece353_hw1.s
 
 WS2812B_LEDS 00000000
 
@@ -191,9 +113,7 @@ Symbol: WS2812B_LEDS
       At line 15 in file ece353_hw1.s
    Uses
       At line 6 in file ece353_hw1.s
-      At line 45 in file ece353_hw1.s
-      At line 69 in file ece353_hw1.s
-      At line 76 in file ece353_hw1.s
+      At line 31 in file ece353_hw1.s
 
 3 symbols
 
@@ -214,19 +134,18 @@ hw1 00000000
 
 Symbol: hw1
    Definitions
-      At line 42 in file ece353_hw1.s
+      At line 28 in file ece353_hw1.s
    Uses
       At line 5 in file ece353_hw1.s
 Comment: hw1 used once
-infinite_loop 0000000C
+infinite_loop 00000008
 
 Symbol: infinite_loop
    Definitions
-      At line 53 in file ece353_hw1.s
+      At line 35 in file ece353_hw1.s
    Uses
-      At line 60 in file ece353_hw1.s
-      At line 85 in file ece353_hw1.s
-
+      At line 38 in file ece353_hw1.s
+Comment: infinite_loop used once
 3 symbols
 
 
@@ -240,7 +159,7 @@ Symbol: init_leds
    Definitions
       At line 8 in file ece353_hw1.s
    Uses
-      At line 50 in file ece353_hw1.s
+      At line 34 in file ece353_hw1.s
 Comment: init_leds used once
 rotate_mod_leds 00000000
 
@@ -248,15 +167,15 @@ Symbol: rotate_mod_leds
    Definitions
       At line 9 in file ece353_hw1.s
    Uses
-      At line 72 in file ece353_hw1.s
-Comment: rotate_mod_leds used once
+      None
+Comment: rotate_mod_leds unused
 write_leds 00000000
 
 Symbol: write_leds
    Definitions
       At line 10 in file ece353_hw1.s
    Uses
-      At line 80 in file ece353_hw1.s
+      At line 37 in file ece353_hw1.s
 Comment: write_leds used once
 3 symbols
-351 symbols in table
+344 symbols in table

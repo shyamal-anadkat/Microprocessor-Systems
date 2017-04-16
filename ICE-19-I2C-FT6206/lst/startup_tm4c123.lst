@@ -48,32 +48,32 @@ ARM Macro Assembler    Page 1
    30 00000000         ;   <o> Stack Size (in Bytes) <0x0-0xFFFFFFFF:8>
    31 00000000         ; </h>
    32 00000000         
-   33 00000000 00001000 
+   33 00000000 00000200 
                        Stack_Size
-                               EQU              0x00001000
+                               EQU              0x00000200
    34 00000000         
    35 00000000                 AREA             STACK, NOINIT, READWRITE, ALIGN
 =3
    36 00000000         Stack_Mem
                                SPACE            Stack_Size
-   37 00001000         __initial_sp
-   38 00001000         
-   39 00001000         
-   40 00001000         ; <h> Heap Configuration
-   41 00001000         ;   <o>  Heap Size (in Bytes) <0x0-0xFFFFFFFF:8>
-   42 00001000         ; </h>
-   43 00001000         
+   37 00000200         __initial_sp
+   38 00000200         
+   39 00000200         
+   40 00000200         ; <h> Heap Configuration
+   41 00000200         ;   <o>  Heap Size (in Bytes) <0x0-0xFFFFFFFF:8>
+   42 00000200         ; </h>
+   43 00000200         
 
 
 
 ARM Macro Assembler    Page 2 
 
 
-   44 00001000 00000000 
+   44 00000200 00000000 
                        Heap_Size
                                EQU              0x00000000
-   45 00001000         
-   46 00001000                 AREA             HEAP, NOINIT, READWRITE, ALIGN=
+   45 00000200         
+   46 00000200                 AREA             HEAP, NOINIT, READWRITE, ALIGN=
 3
    47 00000000         __heap_base
    48 00000000         Heap_Mem
@@ -1229,19 +1229,17 @@ ARM Macro Assembler    Page 19
   964 000000F4                 END
               00000000 
               00000000 
-Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4.fp --apcs=int
-erwork --depend=.\obj\startup_tm4c123.d -o.\obj\startup_tm4c123.o -IC:\Users\jo
-e.krachey\Documents\ece353-src\student-v2.0\ICE-19-I2C-FT6206\RTE -IC:\Keil_v5\
-ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include -IC:\Keil_v5\ARM\PACK\Keil\TM4C_DFP\1.1.
+Command Line: --debug --xref --cpu=Cortex-M4.fp --apcs=interwork --depend=.\obj
+\startup_tm4c123.d -o.\obj\startup_tm4c123.o -II:\ECE353\ICE-19-I2C-FT6206\RTE 
+-IC:\AppV\mdk_510\ARM\PACK\ARM\CMSIS\4.1.1\CMSIS\Include -IC:\AppV\mdk_510\ARM\
+PACK\Keil\TM4C_DFP\1.0.0\Device\Include\TM4C123 --predefine="__EVAL SETA 1" --p
 
 
 
 ARM Macro Assembler    Page 20 
 
 
-0\Device\Include\TM4C123 --predefine="__EVAL SETA 1" --predefine="__MICROLIB SE
-TA 1" --predefine="__UVISION_VERSION SETA 521" --predefine="_RTE_ SETA 1" --pre
-define="TM4C123GH6PM SETA 1" --list=.\lst\startup_tm4c123.lst RTE\Device\TM4C12
+redefine="__MICROLIB SETA 1" --list=.\lst\startup_tm4c123.lst RTE\Device\TM4C12
 3GH6PM\startup_TM4C123.s
 
 
@@ -1265,7 +1263,7 @@ Symbol: Stack_Mem
    Uses
       None
 Comment: Stack_Mem unused
-__initial_sp 00001000
+__initial_sp 00000200
 
 Symbol: __initial_sp
    Definitions
@@ -2546,7 +2544,7 @@ Symbol: Heap_Size
    Uses
       At line 48 in file RTE\Device\TM4C123GH6PM\startup_TM4C123.s
 Comment: Heap_Size used once
-Stack_Size 00001000
+Stack_Size 00000200
 
 Symbol: Stack_Size
    Definitions
@@ -2586,4 +2584,4 @@ Symbol: __main
       At line 237 in file RTE\Device\TM4C123GH6PM\startup_TM4C123.s
 Comment: __main used once
 2 symbols
-472 symbols in table
+469 symbols in table

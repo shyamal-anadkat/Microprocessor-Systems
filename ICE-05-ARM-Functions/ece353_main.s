@@ -1,10 +1,10 @@
 ; Filename:     main.s 
-; Author:       Shyamal Anadkat  
+; Author:       Shyamal Anadkat
 ; Description:  
 
    export __main
    import verifyArray
-   import bubbleSort
+   import bubble_sort
 
 BYTE        EQU     1
 WORD        EQU     4
@@ -83,8 +83,9 @@ FOR_LOOP_END
 	MOV R1, #MAX_INDEX
     
     ; Call Bubble Sort
-	LDR R2, =(bubble_sort)
-    BLX R2
+	BL bubble_sort
+
+    
 
     ; **********************************************************
     ; DO NOT MODIFY BELOW

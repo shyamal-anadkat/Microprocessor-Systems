@@ -5,7 +5,7 @@ ARM Macro Assembler    Page 1
 
 
     1 00000000         ; Filename:     addMultiply.s 
-    2 00000000         ; Author:       ece353 staff 
+    2 00000000         ; Author:       Shyamal Anadkat 
     3 00000000         ; Description:  
     4 00000000         
     5 00000000                 export           addMultiply
@@ -25,7 +25,7 @@ ARM Macro Assembler    Page 1
    19 00000000         
    20 00000000         ;**********************************************
    21 00000000         ; Four arrays of 8-bit signed numbers are 
-   22 00000000         ; passed via the ; first four paramters.
+   22 00000000         ; passed via the first four paramters.
    23 00000000         ; The 5th paramter indicates the length of the
    24 00000000         ; arrays. For each entry in the array, the
    25 00000000         ; following operation takes place.
@@ -49,37 +49,78 @@ ARM Macro Assembler    Page 1
                                PROC
    43 00000000         
    44 00000000         ; Validate Parameters
-   45 00000000         
-   46 00000000         ; Save required registers
-   47 00000000         
-   48 00000000         ; For each index in the arrays, compute  
-   49 00000000         ; Array3[i] = (Array0[i] + Array1[i]) * Array2[i]
-   50 00000000         
-   51 00000000         ; Restore registers saved to the stack
-   52 00000000         
-   53 00000000         ; Return from the loop
-   54 00000000         
-   55 00000000                 ENDP
-   56 00000000         
-   57 00000000         
-   58 00000000         
+   45 00000000         ; Return -1 if error
+   46 00000000         ; Return 0 if success
+   47 00000000 F04F 35FF       MOV              R5, #-1
+   48 00000004 F04F 0600       MOV              R6, #0
+   49 00000008         
+   50 00000008 2800            CMP              R0, #0
+   51 0000000A BF08 4628       MOVEQ            R0, R5
+   52 0000000E D027            BEQ              LOOP_END
+   53 00000010 2900            CMP              R1, #0
+   54 00000012 BF08 4628       MOVEQ            R0, R5
+   55 00000016 D023            BEQ              LOOP_END
+   56 00000018 2A00            CMP              R2, #0
+   57 0000001A BF08 4628       MOVEQ            R0, R5
+   58 0000001E D01F            BEQ              LOOP_END
 
 
 
 ARM Macro Assembler    Page 2 
 
 
-   59 00000000                 align
-   60 00000000         
-   61 00000000         
-   62 00000000                 END
-Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4.fp --apcs=int
-erwork --depend=.\obj\addmultiply.d -o.\obj\addmultiply.o -IC:\Users\joe.krache
-y\Documents\ece353-src\student\ICE-07-EABI\RTE -IC:\Keil_v5\ARM\PACK\ARM\CMSIS\
-4.5.0\CMSIS\Include -IC:\Keil_v5\ARM\PACK\Keil\TM4C_DFP\1.1.0\Device\Include\TM
-4C123 --predefine="__EVAL SETA 1" --predefine="__MICROLIB SETA 1" --predefine="
-__UVISION_VERSION SETA 518" --predefine="_RTE_ SETA 1" --predefine="TM4C123GH6P
-M SETA 1" --list=.\lst\addmultiply.lst addMultiply.s
+   59 00000020 2B00            CMP              R3, #0
+   60 00000022 BF08 4628       MOVEQ            R0, R5
+   61 00000026 D01B            BEQ              LOOP_END
+   62 00000028 F89D 4000       LDRB             R4, [SP]
+   63 0000002C 2C00            CMP              R4, #0
+   64 0000002E BFD8 4628       MOVLE            R0, R5
+   65 00000032 DD15            BLE              LOOP_END
+   66 00000034         
+   67 00000034         ; Save required registers
+   68 00000034 E92D 07F0       PUSH             {R4-R10}
+   69 00000038         
+   70 00000038         ; For each index in the arrays, compute  
+   71 00000038         ; Array3[i] = (Array0[i] + Array1[i]) * Array2[i]
+   72 00000038         
+   73 00000038 F04F 0700       MOV              R7, #0      ;loop counter 
+   74 0000003C         LOOP_START
+   75 0000003C         ;check if not reached array size, return 0 for success
+   76 0000003C 42A7            CMP              R7, R4
+   77 0000003E BF08 4630       MOVEQ            R0, R6      ; return 0 if succe
+                                                            ss, -1 if something
+                                                             wrong 
+   78 00000042 D00D            BEQ              LOOP_END
+   79 00000044         
+   80 00000044         ; load array vals at index R7 
+   81 00000044 F810 8007       LDRB             R8, [R0, R7] ;0
+   82 00000048 F811 9007       LDRB             R9, [R1, R7] ;1
+   83 0000004C F812 A007       LDRB             R10,[R2, R7] ;2
+   84 00000050         
+   85 00000050         ; Array3[i] = (Array0[i] + Array1[i]) * Array2[i]
+   86 00000050 44C8            ADD              R8, R8, R9
+   87 00000052 FB08 F80A       MUL              R8, R8, R10
+   88 00000056 F803 8007       STRB             R8, [R3, R7]
+   89 0000005A         
+   90 0000005A         ;increment index and branch to start 
+   91 0000005A F107 0701       ADD              R7, R7, #1
+   92 0000005E E7ED            B                LOOP_START
+   93 00000060         LOOP_END
+   94 00000060         
+   95 00000060         ; Restore registers saved to the stack
+   96 00000060 E8BD 07F0       POP              {R4-R10}
+   97 00000064         ; Return from the loop
+   98 00000064 4770            BX               LR
+   99 00000066                 ENDP
+  100 00000066 00 00           align
+  101 00000068         
+  102 00000068         
+  103 00000068                 END
+Command Line: --debug --xref --cpu=Cortex-M4.fp --apcs=interwork --depend=.\obj
+\addmultiply.d -o.\obj\addmultiply.o -II:\ECE353\ICE-07-EABI\RTE -IC:\AppV\mdk_
+510\ARM\PACK\ARM\CMSIS\4.1.1\CMSIS\Include -IC:\AppV\mdk_510\ARM\PACK\Keil\TM4C
+_DFP\1.0.0\Device\Include\TM4C123 --predefine="__EVAL SETA 1" --predefine="__MI
+CROLIB SETA 1" --list=.\lst\addmultiply.lst addMultiply.s
 
 
 
@@ -109,6 +150,27 @@ Symbol: FLASH
    Uses
       None
 Comment: FLASH unused
+LOOP_END 00000060
+
+Symbol: LOOP_END
+   Definitions
+      At line 93 in file addMultiply.s
+   Uses
+      At line 52 in file addMultiply.s
+      At line 55 in file addMultiply.s
+      At line 58 in file addMultiply.s
+      At line 61 in file addMultiply.s
+      At line 65 in file addMultiply.s
+      At line 78 in file addMultiply.s
+
+LOOP_START 0000003C
+
+Symbol: LOOP_START
+   Definitions
+      At line 74 in file addMultiply.s
+   Uses
+      At line 92 in file addMultiply.s
+Comment: LOOP_START used once
 addMultiply 00000000
 
 Symbol: addMultiply
@@ -117,5 +179,5 @@ Symbol: addMultiply
    Uses
       At line 5 in file addMultiply.s
 Comment: addMultiply used once
-2 symbols
+4 symbols
 338 symbols in table

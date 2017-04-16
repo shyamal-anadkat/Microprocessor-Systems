@@ -11,14 +11,17 @@
 #include "validate.h"
 
 //ADD CODE #2
+#include "pc_buffer.h"
 
 // ADD CODE #3
+#define BUFFER_SIZE 32
 
 /******************************************************************************
  * Global Variables
  *****************************************************************************/
 
 // ADD CODE #4
+static PC_Buffer Circular_Buffer;
 
 //*****************************************************************************
 //*****************************************************************************
@@ -197,6 +200,8 @@ main(void)
   put_string("**************************************\n\r");
   
   // ADD CODE 10
+	// Call pc_buffer_init()
+  pc_buffer_init(&Circular_Buffer, BUFFER_SIZE );
   
   if (pc_buffer_test_0(BUFFER_SIZE) )
   {

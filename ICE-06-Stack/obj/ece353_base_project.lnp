@@ -1,4 +1,4 @@
---cpu=Cortex-M4.fp
+--cpu Cortex-M4.fp
 ".\obj\ece353_main.o"
 ".\obj\matrixmultiply.o"
 ".\obj\startup_tm4c123.o"
